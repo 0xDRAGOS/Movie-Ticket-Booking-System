@@ -85,4 +85,32 @@ private:
 public:
 	PublicUser(const string& lastName = "", const string& firstName = "", const string& email = "", const string& password = "", const Address& address):
 		address(address), User(lastName, firstName, email, password) {}
+	const Address getAddress() { return address; };
+	void setAddress(Address& newAddress) { address = newAddress; };
 };
+
+class PublicUserRepository {
+private:
+	DatabaseConnector dbConnector;
+public:
+	PublicUserRepository() {}
+	PublicUser loadPublicUser(const string& inputEmail, const string& inputPassword));
+};
+
+PublicUser PublicUserRepository::loadPublicUser(const string& inputEmail, const string& inputPassword) {
+	PublicUser user;
+	sql::Connection* con = dbConnector.establishConnection();
+	try {
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT * FROM users WHERE email = ? AND password = ?;");
+		pstmt->setString(1, inputEmail);
+		pstmt->setString(2, inputPassword);
+		sql::ResultSet* res = pstmt->executeQuery();
+		while (res->next()) {
+			user.setEmail(res->getString("email"));
+			user.setFirstName(res->getString("firstName"));
+			user.setLastName(res->getString("lastName"));
+			user.setPassword(res->getString("password"));
+			user.setAddress(res->getString(""));
+		}
+	}
+}
