@@ -88,7 +88,29 @@ public:
 		address(address), User(lastName, firstName, email, password) {}
 	const Address getAddress() { return address; };
 	void setAddress(Address& newAddress) { address = newAddress; };
+	void read();
 };
+
+void PublicUser::read() {
+	cout << "Enter first name: ";
+	cin >> firstName;
+	cout << "Enter last name: ";
+	cin >> lastName;
+	cout << "Enter email: ";
+	cin >> email;
+	cout << "Enter password: ";
+	cin >> password;
+	string city, street, number;
+	cout << "Enter city: ";
+	cin.ignore();
+	getline(cin, city);
+	cout << "Enter street: ";
+	getline(cin, street);
+	cout << "Enter number: ";
+	getline(cin, number);
+	Address newAddress(city, street, number);
+	setAddress(newAddress);
+}
 
 class PublicUserRepository {
 private:
@@ -96,6 +118,7 @@ private:
 public:
 	PublicUserRepository() {}
 	PublicUser loadPublicUser(const string& inputEmail, const string& inputPassword);
+	void insertIntoDatabase(PublicUser& user);
 };
 
 PublicUser PublicUserRepository::loadPublicUser(const string& inputEmail, const string& inputPassword) {
@@ -108,10 +131,10 @@ PublicUser PublicUserRepository::loadPublicUser(const string& inputEmail, const 
 		sql::ResultSet* res = pstmt->executeQuery();
 		while (res->next()) {
 			string addressData = res->getString("address");
-			string country, city, street, number;
-			cout << country << city << street << number;
+			string country, county, city, street, number;
 			istringstream iss(addressData);
 			getline(iss, country, ',');
+			getline(iss, county, ',');
 			getline(iss, city, ',');
 			getline(iss, street, ',');
 			getline(iss, number, ',');
@@ -119,7 +142,7 @@ PublicUser PublicUserRepository::loadPublicUser(const string& inputEmail, const 
 				res->getString("firstName"),
 				res->getString("lastName"),
 				res->getString("password"),
-				Address(country, city, street, number));
+				Address(country, county, city, street, number));
 		}
 		cout << "User loaded up successfully." << endl;
 		delete pstmt;
@@ -129,5 +152,28 @@ PublicUser PublicUserRepository::loadPublicUser(const string& inputEmail, const 
 			cerr << "Could not load user. Error: " << e.what() << endl;
 			exit(1);
 		}
+		dbConnector.closeConnection(con);
 		return user;
 	}
+
+void PublicUserRepository::insertIntoDatabase(PublicUser& user) {
+	sql::Connection* con = dbConnector.establishConnection();
+	Address adr = user.getAddress();
+	string addressString = adr.getCountry() + ", " + adr.getCounty() + ", " + adr.getCity() + ", " + adr.getStreet() + ", " + adr.getNumber();
+	try {
+		sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO users (user_type, email, password, lastName, firstName, address) VALUES('public', ?, ?, ?, ?, ?)");
+		pstmt->setString(1, user.getEmail());
+		pstmt->setString(2, user.getPassword());
+		pstmt->setString(3, user.getLastName());
+		pstmt->setString(4, user.getFirstName());
+		pstmt->setString(5, addressString);
+		pstmt->executeUpdate();
+		delete pstmt;
+		cout << "User added successfuly into database." << endl;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not insert the public user into database. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+}

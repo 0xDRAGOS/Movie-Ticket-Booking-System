@@ -5,14 +5,20 @@ using namespace std;
 
 class Address {
 	string country;
+	string county;
 	string city;
 	string street;
 	string number;
 public:
-	Address(const string& country = "", const string& city = "", const string& street = "", const string& number = "")
-		: country(country), city(city), street(street), number(number) {}
+	Address(const string& country = "", const string& county = "", const string& city = "", const string& street = "", const string& number = "")
+		: country(country), county(county), city(city), street(street), number(number) {}
 
 	virtual ~Address() {}
+	const string getCountry() { return country; };
+	const string getCounty() { return county; };
+	const string getCity() { return city; };
+	const string getStreet() { return street; };
+	const string getNumber() { return number; };
 	Address& operator=(const Address& adr) {
 		if (this != &adr) {
 			this->country = adr.country;
