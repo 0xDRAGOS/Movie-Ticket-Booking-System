@@ -79,10 +79,10 @@ void UserRepository::listUsersByName(const string& lastName, const string& first
 	dbConnector.closeConnection(con);
 }
 
-class Admin : public User {
+class PublicUser : public User {
 private:
 	Address address;
 public:
-	Admin(const string& lastName = "", const string& firstName = "", const string& email = "", const string& password = "", const Address& address):
+	PublicUser(const string& lastName = "", const string& firstName = "", const string& email = "", const string& password = "", const Address& address):
 		address(address), User(lastName, firstName, email, password) {}
 };
