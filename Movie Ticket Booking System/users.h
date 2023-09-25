@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sstream>
 #include "address.h"
 #include "database_connection.h"
 using namespace std;
@@ -83,7 +84,7 @@ class PublicUser : public User {
 private:
 	Address address;
 public:
-	PublicUser(const string& lastName = "", const string& firstName = "", const string& email = "", const string& password = "", const Address& address):
+	PublicUser(const string& lastName = "", const string& firstName = "", const string& email = "", const string& password = "", const Address& address = Address()):
 		address(address), User(lastName, firstName, email, password) {}
 	const Address getAddress() { return address; };
 	void setAddress(Address& newAddress) { address = newAddress; };
@@ -94,7 +95,7 @@ private:
 	DatabaseConnector dbConnector;
 public:
 	PublicUserRepository() {}
-	PublicUser loadPublicUser(const string& inputEmail, const string& inputPassword));
+	PublicUser loadPublicUser(const string& inputEmail, const string& inputPassword);
 };
 
 PublicUser PublicUserRepository::loadPublicUser(const string& inputEmail, const string& inputPassword) {
@@ -106,11 +107,27 @@ PublicUser PublicUserRepository::loadPublicUser(const string& inputEmail, const 
 		pstmt->setString(2, inputPassword);
 		sql::ResultSet* res = pstmt->executeQuery();
 		while (res->next()) {
-			user.setEmail(res->getString("email"));
-			user.setFirstName(res->getString("firstName"));
-			user.setLastName(res->getString("lastName"));
-			user.setPassword(res->getString("password"));
-			user.setAddress(res->getString(""));
+			string addressData = res->getString("address");
+			string country, city, street, number;
+			cout << country << city << street << number;
+			istringstream iss(addressData);
+			getline(iss, country, ',');
+			getline(iss, city, ',');
+			getline(iss, street, ',');
+			getline(iss, number, ',');
+			user = PublicUser(res->getString("email"),
+				res->getString("firstName"),
+				res->getString("lastName"),
+				res->getString("password"),
+				Address(country, city, street, number));
 		}
+		cout << "User loaded up successfully." << endl;
+		delete pstmt;
+		delete res;
 	}
-}
+		catch (sql::SQLException& e) {
+			cerr << "Could not load user. Error: " << e.what() << endl;
+			exit(1);
+		}
+		return user;
+	}

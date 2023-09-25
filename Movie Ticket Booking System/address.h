@@ -7,9 +7,9 @@ class Address {
 	string country;
 	string city;
 	string street;
-	int number;
+	string number;
 public:
-	Address(const string& country, const string& city, const string& street, const int& number)
+	Address(const string& country = "", const string& city = "", const string& street = "", const string& number = "")
 		: country(country), city(city), street(street), number(number) {}
 
 	virtual ~Address() {}
