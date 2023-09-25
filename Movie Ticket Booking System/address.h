@@ -22,6 +22,7 @@ public:
 	Address& operator=(const Address& adr) {
 		if (this != &adr) {
 			this->country = adr.country;
+			this->county = adr.county;
 			this->city = adr.city;
 			this->street = adr.street;
 			this->number = adr.number;

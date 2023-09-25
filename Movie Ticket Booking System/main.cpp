@@ -6,6 +6,10 @@ int main() {
 	//b.listUsersByName("Simion", "Dragos-Ionut");
 	//b.updateUser(a, "firstName", "Dragos Ionut");
 	
+	//PublicUserRepository bb;
+	//PublicUser aa = bb.loadPublicUser("email@example.com", "1234");
+	PublicUser aa;
+	aa.read();
 	PublicUserRepository bb;
-	PublicUser aa = bb.loadPublicUser("email@example.com", "1234");
+	bb.insertIntoDatabase(aa);
 }

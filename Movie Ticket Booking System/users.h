@@ -100,15 +100,19 @@ void PublicUser::read() {
 	cin >> email;
 	cout << "Enter password: ";
 	cin >> password;
-	string city, street, number;
-	cout << "Enter city: ";
+	string country, county, city, street, number;
+	cout << "Enter country: ";
 	cin.ignore();
+	getline(cin, country);
+	cout << "Enter county: ";
+	getline(cin, county);
+	cout << "Enter city: ";
 	getline(cin, city);
 	cout << "Enter street: ";
 	getline(cin, street);
 	cout << "Enter number: ";
 	getline(cin, number);
-	Address newAddress(city, street, number);
+	Address newAddress(country, county, city, street, number);
 	setAddress(newAddress);
 }
 
@@ -117,9 +121,28 @@ private:
 	DatabaseConnector dbConnector;
 public:
 	PublicUserRepository() {}
+	void updateAddress(PublicUser& user, Address& newAddress);
 	PublicUser loadPublicUser(const string& inputEmail, const string& inputPassword);
 	void insertIntoDatabase(PublicUser& user);
 };
+
+void PublicUserRepository::updateAddress(PublicUser& user, Address& newAddress) {
+	sql::Connection* con = dbConnector.establishConnection();
+	string addressString = newAddress.getCountry() + ", " + newAddress.getCounty() + ", " + newAddress.getCity() + ", " + newAddress.getStreet() + ", " + newAddress.getNumber();
+	try {
+		sql::PreparedStatement* pstmt = con->prepareStatement("UPDATE users SET address = ? WHERE email = ? AND password = ?;");
+		pstmt->setString(1, addressString);
+		pstmt->setString(2, user.getEmail());
+		pstmt->setString(3, user.getPassword());
+		pstmt->executeUpdate();
+		delete pstmt;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not update user's address. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+}
 
 PublicUser PublicUserRepository::loadPublicUser(const string& inputEmail, const string& inputPassword) {
 	PublicUser user;
