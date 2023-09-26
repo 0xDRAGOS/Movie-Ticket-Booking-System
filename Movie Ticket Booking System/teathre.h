@@ -310,6 +310,7 @@ private:
 public:
 	TeathreRepository() {}
 	int getTeathreID(Teathre& teathre);
+	void insertIntoDatabase(Teathre& teathre);
 	void listMovies(Teathre& teathre);
 };
 
@@ -326,6 +327,23 @@ int TeathreRepository::getTeathreID(Teathre& teathre) {
 	}
 	catch (sql::SQLException& e) {
 		cerr << "Could not get teathre id. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+}
+
+void TeathreRepository::insertIntoDatabase(Teathre& teathre) {
+	sql::Connection* con = dbConnector.establishConnection();
+	try {
+		sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO teathres (name, address) VALUES (?, ?);");
+		pstmt->setString(1, teathre.getName());
+		pstmt->setString(2, teathre.getAddress().toString());
+		pstmt->executeUpdate();
+		delete pstmt;
+		cout << "Teathre added successfuly into database." << endl;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not insert the teathre into database. Error: " << e.what() << endl;
 		exit(1);
 	}
 	dbConnector.closeConnection(con);

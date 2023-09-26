@@ -130,6 +130,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="address.cpp" />
+    <ClCompile Include="database_connection.cpp" />
+    <ClCompile Include="date.cpp" />
     <ClCompile Include="main.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4996</DisableSpecificWarnings>
     </ClCompile>
