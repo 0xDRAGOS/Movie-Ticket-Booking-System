@@ -29,5 +29,8 @@
     <ClInclude Include="database_connection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="cinema.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
