@@ -7,6 +7,7 @@
 using std::string;
 using std::cerr;
 using std::endl;
+using std::to_string;
 
 class Teathre;
 
@@ -171,6 +172,34 @@ public:
 	void setLaunchDate(const Date& newLaunchDate) { launch_date = newLaunchDate; }
 };
 
+class MovieInterface {
+public:
+	void displayMovie(Movie& movie);
+	void displayMovieExtended(Movie& movie);
+};
+
+void MovieInterface::displayMovie(Movie& movie) {
+	cout << movie.getName() << endl;
+	cout << "Format: " << movie.getFormat() << endl;
+	cout << "Rating: " << movie.getRating() << endl;
+	cout << "Gnenre: " << movie.getGenre() << endl;
+	cout << "Trailer: " << movie.getTrailerURL() << endl;
+}
+
+void MovieInterface::displayMovieExtended(Movie& movie) {
+	cout << "Original title: " << movie.getName() << endl;
+	cout << "Director: " << movie.getDirector() << endl;
+	cout << "Actors: " << movie.getActors() << endl;
+	cout << "Gnenre: " << movie.getGenre() << endl;
+	cout << "Language: " << movie.getLanguage() << endl;
+	cout << "Format: " << movie.getFormat() << endl;
+	cout << "Launch date: " << movie.getLaunchDate() << endl;
+	cout << "Country: " << movie.getCountry() << endl;
+	cout << "Producer: " << movie.getProducer() << endl;
+	cout << "Rating: " << movie.getRating() << endl;
+	cout << "Trailer: " << movie.getTrailerURL() << endl;
+}
+
 class MovieRepository {
 private:
 	DatabaseConnector dbConnector;
@@ -246,15 +275,34 @@ void MovieRepository::updateMovie(Movie& movie, const string& field, const T& va
 
 class Teathre {
 private:
+	Auditorium* auditoriums;
+	Movie* movies;
+	int numAuditoriums;
+	int numMovies;
 	string name;
 	Address address;
 public:
-	Teathre(const string& name, const Address& address) : name(name), address(address) {}
+	Teathre(const string& name, const Address& address) 
+		: name(name), address(address), auditoriums(nullptr), movies(nullptr), numAuditoriums(0), numMovies(0) {}
+	~Teathre() {
+		delete[] auditoriums;
+		delete[] movies;
+	}
 	const string getName() { return name; };
 	const Address getAddress() { return address; };
 	void setName(const string& newName) { this->name = name; };
 	void setAddress(const Address& newAddress) { this->address = newAddress; };
+	void addAuditorium(const Auditorium& auditorium);
+	void addMovie(const Movie& movie);
 };
+
+void Teathre::addAuditorium(const Auditorium& auditorium) {
+	auditoriums[numAuditoriums++] = auditorium;
+}
+
+void Teathre::addMovie(const Movie& movie) {
+	movies[numMovies++] = movie;
+}
 
 class TeathreRepository {
 private:
@@ -262,6 +310,7 @@ private:
 public:
 	TeathreRepository() {}
 	int getTeathreID(Teathre& teathre);
+	void listMovies(Teathre& teathre);
 };
 
 int TeathreRepository::getTeathreID(Teathre& teathre) {
@@ -277,6 +326,42 @@ int TeathreRepository::getTeathreID(Teathre& teathre) {
 	}
 	catch (sql::SQLException& e) {
 		cerr << "Could not get teathre id. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+}
+
+void TeathreRepository::listMovies(Teathre& teathre) {
+	sql::Connection* con = dbConnector.establishConnection();
+	try {
+		TeathreRepository teathreRep;
+		int teathre_id = teathreRep.getTeathreID(teathre);
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT *, YEAR(launch_date) AS launch_date_year, MONTH(launch_date) AS launch_date_month, DAY(launch_date) AS launch_date_day FROM movies WHERE teathre_id = ?;");
+		pstmt->setInt(1, teathre_id);
+		sql::ResultSet* res = pstmt->executeQuery();
+		int count = 0;
+		while (res->next()) {
+			Movie movie(res->getString("name"),
+				res->getString("format"),
+				res->getString("rating"),
+				res->getString("director"),
+				res->getString("actors"),
+				res->getString("trailer_url"),
+				res->getString("genre"),
+				res->getString("language"),
+				res->getString("producer"),
+				res->getString("country"),
+				Date(res->getInt("launch_date_year"), res->getInt("launch_date_month"), res->getInt("launch_date_day"))
+			);
+			MovieInterface movieInt;
+			movieInt.displayMovie(movie);
+			if (++count % 3 == 0) cout << endl;
+		}
+		delete pstmt;
+		delete res;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not list the movies. Error: " << e.what() << endl;
 		exit(1);
 	}
 	dbConnector.closeConnection(con);
