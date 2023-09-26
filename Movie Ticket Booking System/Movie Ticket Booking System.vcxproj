@@ -136,7 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="address.h" />
-    <ClInclude Include="cinema.h" />
+    <ClInclude Include="teathre.h" />
     <ClInclude Include="database_connection.h" />
     <ClInclude Include="date.h" />
     <ClInclude Include="users.h" />

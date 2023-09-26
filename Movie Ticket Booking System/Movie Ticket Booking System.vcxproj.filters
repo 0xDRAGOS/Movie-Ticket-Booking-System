@@ -29,7 +29,7 @@
     <ClInclude Include="database_connection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cinema.h">
+    <ClInclude Include="teathre.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="date.h">

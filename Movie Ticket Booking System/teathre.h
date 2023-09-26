@@ -4,22 +4,24 @@
 #include "database_connection.h"
 #include "date.h"
 using std::string;
+using std::cerr;
+using std::endl;
 
 class Audithorium {
 private:
 	bool** seats;
 	int rows;
 	int columns;
-	int audithorium_number;
+	int seats_number;
 public:
 	Audithorium(const int& audithoirum_number, const int& rows, const int& columns);
 	~Audithorium();
 	void changeSeatStatus(bool status, int row, int column);
-	const int getAudithoriumNumber() { return audithorium_number; };
-	void setAudithoriumNumber(int newAudithoriumNumber) { this->audithorium_number = newAudithoriumNumber; };
+	const int getAudithoriumNumber() { return seats_number; };
+	void setAudithoriumNumber(int newAudithoriumNumber) { this->seats_number = newAudithoriumNumber; };
 };
 
-Audithorium::Audithorium(const int& audithoirum_number, const int& rows, const int& columns): audithorium_number(audithoirum_number), rows(rows), columns(columns) {
+Audithorium::Audithorium(const int& seats_number, const int& rows, const int& columns): seats_number(seats_number), rows(rows), columns(columns) {
 	seats = new bool*[rows];
 	for (int i = 0; i < rows; i++) {
 		seats[i] = new bool[columns];
@@ -112,24 +114,23 @@ template <typename T>
 void MovieRepository::updateMovie(Movie& movie, const string& field, const T& value) {
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
-		const string query = "UPDATE movies SET " + field + " = ? WHERE email = ? AND password = ?";
+		const string query = "UPDATE movies SET " + field + " = ? WHERE name = ?";
 		sql::PreparedStatement* pstmt = con->prepareStatement(query);
 		pstmt->setString(1, value);
-		pstmt->setString(2, movie.getEmail());
-		pstmt->setString(3, movie.getPassword());
+		pstmt->setString(2, movie.getName());
 		int rowsUpdated = pstmt->executeUpdate();
 
 		if (rowsUpdated > 0) {
-			cout << "Movie" << movie.getFirstName() << " " << movie.getLastName() << " modified with success." << endl;
+			cout << "Movie" << movie.getName() << " modified with success." << endl;
 			con->commit();
 		}
 		else {
-			cout << "Movie" << movie.getFirstName() << " " << movie.getLastName() << " not found." << endl;
+			cout << "Movie" << movie.getName() << " not found." << endl;
 		}
 		delete pstmt;
 	}
 	catch (sql::SQLException& e) {
-		cerr << "Could not update movie ( " << movie.getFirstName() << " " << movie.getLastName() << "). Error message : " << e.what() << endl;
+		cerr << "Could not update movie ( " << movie.getName() << "). Error message : " << e.what() << endl;
 		con->rollback();
 		exit(1);
 	}

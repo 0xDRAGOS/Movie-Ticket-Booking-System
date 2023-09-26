@@ -6,7 +6,7 @@
 #include <cppconn/exception.h>
 #include <cppconn/prepared_statement.h>
 
-using namespace std;
+using std::string;
 
 class DatabaseConnector {
 private:
