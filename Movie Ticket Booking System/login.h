@@ -4,6 +4,8 @@
 using std::string;
 using std::cerr;
 using std::endl;
+using std::cout;
+using std::cin;
 
 class Login {
 private:
@@ -14,6 +16,11 @@ public:
 	virtual ~Login() {}
 	const string getInputEmail();
 	const string getInputPassword();
+};
+
+class LoginInterface {
+public:
+	void displayLoginMenu(Login& login, LoginRepository& loginRep);
 };
 
 class LoginRepository {
