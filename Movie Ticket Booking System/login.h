@@ -12,7 +12,7 @@ private:
 	string inputEmail;
 	string inputPassword;
 public:
-	Login(const string& inputEmail, const string& inputPassoword);
+	Login(const string& inputEmail = "", const string& inputPassoword = "");
 	virtual ~Login() {}
 	const string getInputEmail();
 	const string getInputPassword();
