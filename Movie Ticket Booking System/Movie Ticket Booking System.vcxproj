@@ -134,6 +134,7 @@
     <ClCompile Include="auditorium.cpp" />
     <ClCompile Include="database_connection.cpp" />
     <ClCompile Include="date.cpp" />
+    <ClCompile Include="login.cpp" />
     <ClCompile Include="main.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4996</DisableSpecificWarnings>
     </ClCompile>
@@ -147,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="address.h" />
     <ClInclude Include="auditorium.h" />
+    <ClInclude Include="login.h" />
     <ClInclude Include="movie.h" />
     <ClInclude Include="private_user.h" />
     <ClInclude Include="public_user.h" />
