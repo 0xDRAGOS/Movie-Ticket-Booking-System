@@ -1,6 +1,6 @@
 #include "private_user.h"
 
-PrivateUser::PrivateUser(const string& lastName = "", const string& firstName = "", const string& email = "", const string& password = "")
+PrivateUser::PrivateUser(const string& lastName, const string& firstName, const string& email, const string& password)
 	: User(lastName, firstName, email, password) {}
 
 PrivateUser PrivateUserRepository::loadPrivateUser(const string& inputEmail, const string& inputPassword) {

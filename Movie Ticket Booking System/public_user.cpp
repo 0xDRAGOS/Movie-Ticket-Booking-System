@@ -1,6 +1,6 @@
 #include "public_user.h"
 
-PublicUser::PublicUser(const string& lastName = "", const string& firstName = "", const string& email = "", const string& password = "", const Address& address = Address()) :
+PublicUser::PublicUser(const string& lastName, const string& firstName, const string& email, const string& password, const Address& address) :
 	address(address), User(lastName, firstName, email, password) {}
 const Address PublicUser::getAddress() { return address; };
 void PublicUser::setAddress(Address& newAddress) { address = newAddress; };

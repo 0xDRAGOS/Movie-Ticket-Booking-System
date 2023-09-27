@@ -2,6 +2,8 @@
 #include "database_connection.h"
 #include "teathre.h"
 
+class Teathre;
+
 class Auditorium {
 private:
 	bool** seats;
@@ -10,7 +12,7 @@ private:
 	int seats_number;
 	int auditorium_number;
 public:
-	Auditorium(const int& audithoirum_number, const int& seats_number, const int& rows, const int& columns);
+	Auditorium(const int& audithoirum_number = 0, const int& seats_number = 0, const int& rows = 0, const int& columns = 0);
 	virtual ~Auditorium();
 	const int getAuditoriumNumber();
 	const int getSeatNumber();

@@ -1,6 +1,6 @@
 #include "user.h"
 
-User::User(const string& lastName = "", const string& firstName = "", const string& email = "", const string& password = "")
+User::User(const string& lastName, const string& firstName, const string& email, const string& password)
 	: lastName(lastName), firstName(firstName), email(email), password(password) {}
 
 const string User::getFirstName() { return firstName; };

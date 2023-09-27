@@ -18,15 +18,15 @@ public:
 	const string getInputPassword();
 };
 
-class LoginInterface {
-public:
-	void displayLoginMenu(Login& login, LoginRepository& loginRep);
-};
-
 class LoginRepository {
 private:
 	DatabaseConnector dbConnector;
 public:
 	LoginRepository() {}
 	bool validateLogin(Login& login);
+};
+
+class LoginInterface {
+public:
+	void displayLoginMenu(Login& login, LoginRepository& loginRep);
 };

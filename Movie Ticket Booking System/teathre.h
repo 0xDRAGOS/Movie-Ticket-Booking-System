@@ -1,25 +1,27 @@
 #pragma once
-
 #include <string>
 #include "movie.h"
+#include "auditorium.h"
 #include "database_connection.h"
-#include "date.h"
 #include "address.h"
 using std::string;
 using std::cerr;
 using std::endl;
 using std::to_string;
 
+class Auditorium;
+class Movie;
+
 class Teathre {
 private:
-	Auditorium* auditoriums;
+	Auditorium *auditoriums;
 	Movie* movies;
 	int auditoriums_number;
 	int movies_number;
 	string name;
 	Address address;
 public:
-	Teathre(const string& name, const Address& address);
+	Teathre(const string& name = "", const Address& address = Address());
 	virtual ~Teathre();
 	const string getName();
 	const Address getAddress();

@@ -1,6 +1,10 @@
 #pragma once
 #include "auditorium.h"
 #include "teathre.h"
+#include "date.h"
+
+class Auditorium;
+class Teathre;
 
 class Movie {
 private:
@@ -16,7 +20,7 @@ private:
 	string country;
 	Date launch_date;
 public:
-	Movie(const string& name, const string& format, const string& rating, const string& director, const string& actors, const string& trailer_url, const string& genre, const string& language, const string& producer, const string& country, const Date& launch_date);
+	Movie(const string& name = "", const string& format = "", const string& rating = "", const string& director = "", const string& actors = "", const string& trailer_url = "", const string& genre = "", const string& language = "", const string& producer = "", const string& country = "", const Date& launch_date = Date());
 	const string getName();
 	const string getFormat();
 	const string getRating();

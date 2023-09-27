@@ -2,11 +2,15 @@
 #include "teathre.h"
 #include "public_user.h"
 
+class Movie;
+class Teathre;
+class Auditorium;
+
 class Ticket {
 private:
 	double price;
 public:
-	Ticket(const double& price);
+	Ticket(const double& price = 0.0);
 	double getPrice();
 	void setPrice(double& newPrice);
 };

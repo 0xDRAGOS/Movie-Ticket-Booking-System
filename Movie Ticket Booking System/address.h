@@ -12,11 +12,11 @@ class Address {
 public:
 	Address(const string& country = "", const string& county = "", const string& city = "", const string& street = "", const string& number = "");
 	virtual ~Address() {}
-	const string getCountry() { return country; };
-	const string getCounty() { return county; };
-	const string getCity() { return city; };
-	const string getStreet() { return street; };
-	const string getNumber() { return number; };
+	const string getCountry();
+	const string getCounty();
+	const string getCity();
+	const string getStreet();
+	const string getNumber();
 	string toString() const;
 	Address& operator=(const Address& adr);
 };
