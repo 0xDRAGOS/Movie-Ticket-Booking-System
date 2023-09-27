@@ -23,8 +23,8 @@ void Teathre::addMovie(const Movie& movie) {
 
 int TeathreRepository::getTeathreID(Teathre& teathre) {
 	sql::Connection* con = dbConnector.establishConnection();
+	int id;
 	try {
-		int id;
 		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT id FROM teathres WHERE name = ?;");
 		pstmt->setString(1, teathre.getName());
 		sql::ResultSet* res = pstmt->executeQuery();
@@ -37,6 +37,7 @@ int TeathreRepository::getTeathreID(Teathre& teathre) {
 		exit(1);
 	}
 	dbConnector.closeConnection(con);
+	return id;
 }
 
 void TeathreRepository::insertIntoDatabase(Teathre& teathre) {

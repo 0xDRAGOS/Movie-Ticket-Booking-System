@@ -138,16 +138,23 @@
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4996</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="movie.cpp" />
+    <ClCompile Include="private_user.cpp" />
+    <ClCompile Include="public_user.cpp" />
     <ClCompile Include="teathre.cpp" />
+    <ClCompile Include="ticket.cpp" />
+    <ClCompile Include="user.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="address.h" />
     <ClInclude Include="auditorium.h" />
     <ClInclude Include="movie.h" />
+    <ClInclude Include="private_user.h" />
+    <ClInclude Include="public_user.h" />
     <ClInclude Include="teathre.h" />
     <ClInclude Include="database_connection.h" />
     <ClInclude Include="date.h" />
-    <ClInclude Include="users.h" />
+    <ClInclude Include="ticket.h" />
+    <ClInclude Include="user.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -48,6 +48,31 @@ void MovieInterface::displayMovieExtended(Movie& movie) {
 	cout << "Trailer: " << movie.getTrailerURL() << endl;
 }
 
+int MovieRepository::getMovieID(Movie& movie, Auditorium& auditorium, Teathre& teathre) {
+	sql::Connection* con = dbConnector.establishConnection();
+	int id;
+	try {
+		TeathreRepository teathreRep;
+		int teathre_id = teathreRep.getTeathreID(teathre);
+		AuditoriumRepository auditoriumRep;
+		int auditorium_id = auditoriumRep.getAuditoriumID(auditorium, teathre);
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT id FROM movies WHERE name = ? AND teathre_id = ? AND auditorium_id = ?;");
+		pstmt->setString(1, movie.getName());
+		pstmt->setInt(2, teathre_id);
+		pstmt->setInt(3, auditorium_id);
+		sql::ResultSet* res = pstmt->executeQuery();
+		id = res->getInt("id");
+		delete pstmt;
+		delete res;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not get movie id. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+	return id;
+}
+
 void MovieRepository::insertIntoDatabase(Movie& movie, Teathre& teathre, Auditorium& auditorium) {
 	sql::Connection* con = dbConnector.establishConnection();
 	try {

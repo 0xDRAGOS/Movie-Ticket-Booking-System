@@ -14,9 +14,9 @@ public:
 	virtual ~Auditorium();
 	const int getAuditoriumNumber();
 	const int getSeatNumber();
+	void setAuditoriumNumber(int newAuditoriumNumber);
+	void setSeatsNumber(int newSeatsNumber);
 	void changeSeatStatus(bool status, int row, int column);
-	void setAuditoriumNumber(int newAuditoriumNumber) { this->auditorium_number = newAuditoriumNumber; };
-	void setSeatsNumber(int newSeatsNumber) { this->seats_number = newSeatsNumber; };
 };
 
 class AuditoriumRepository {

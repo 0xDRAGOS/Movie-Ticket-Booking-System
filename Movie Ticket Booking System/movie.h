@@ -51,6 +51,7 @@ private:
 	DatabaseConnector dbConnector;
 public:
 	MovieRepository() {}
+	int getMovieID(Movie& movie, Auditorium& auditorium, Teathre& teathre);
 	void insertIntoDatabase(Movie& movie, Teathre& teathre, Auditorium& auditorium);
 	//Movie loadMovie();
 	template <typename T>

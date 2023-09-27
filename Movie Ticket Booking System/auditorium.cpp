@@ -19,6 +19,9 @@ Auditorium::~Auditorium() {
 const int Auditorium::getAuditoriumNumber() { return auditorium_number; };
 const int Auditorium::getSeatNumber() { return seats_number; };
 
+void Auditorium::setAuditoriumNumber(int newAuditoriumNumber) { this->auditorium_number = newAuditoriumNumber; };
+void Auditorium::setSeatsNumber(int newSeatsNumber) { this->seats_number = newSeatsNumber; };
+
 void Auditorium::changeSeatStatus(bool status, int row, int column) {
 	if (row >= 0 && row < rows && column >= 0 && column < columns) {
 		seats[row][column] = status;
