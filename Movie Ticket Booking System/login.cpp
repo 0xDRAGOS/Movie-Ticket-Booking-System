@@ -14,7 +14,7 @@ bool LoginRepository::validateLogin(Login& login) {
         pstmt->setString(1, login.getInputEmail());
         pstmt->setString(2, login.getInputPassword());
         sql::ResultSet* res = pstmt->executeQuery();
-        if (res->next()) {
+        if (res->next() && res->getInt(1) == 1) {
             isValid = true;
         }
         delete pstmt;
@@ -30,14 +30,15 @@ bool LoginRepository::validateLogin(Login& login) {
 void LoginInterface::displayLoginMenu(Login& login, LoginRepository& loginRep) {
     string inputEmail, inputPassword;
     bool isValid = false;
+    cout << "^----------[LOGIN]----------^" << endl;
     while (!isValid) {
-        cout << "^----------[LOGIN]----------^" << endl;
         cout << "| Enter email: "; cin >> inputEmail;
         cout << "| Enter password: "; cin >> inputPassword;
-        cout << "_____________________________" << endl;
 
         login = Login(inputEmail, inputPassword);
         isValid = loginRep.validateLogin(login);
-        if (isValid) cout << "Logged in successfully!" << endl;
+        if (!isValid) cout << "Wrong email/password, retrying..." << endl;
     }
+    if (isValid) cout << "Logged in successfully!" << endl;
+    cout << "_____________________________" << endl;
 }
