@@ -15,6 +15,8 @@ const string Movie::getProducer() { return producer; }
 const string Movie::getCountry() { return country; }
 const Date Movie::getLaunchDate() { return launch_date; }
 
+void Movie::setName(const string& newName) { name = newName; };
+void Movie::setTrailerURL(const string& newTrailerURL) { trailer_url = newTrailerURL; };
 void Movie::setFormat(const string& newFormat) { format = newFormat; }
 void Movie::setRating(const string& newRating) { rating = newRating; }
 void Movie::setDirector(const string& newDirector) { director = newDirector; }
@@ -73,6 +75,29 @@ int MovieRepository::getMovieID(Movie& movie, Auditorium& auditorium, Teathre& t
 	return id;
 }
 
+int MovieRepository::getNumberOfTotalUniqueMovies() {
+	sql::Connection* con = dbConnector.establishConnection();
+	int number = 0;
+	try {
+		sql::Statement* stmt = con->createStatement();
+		sql::ResultSet* res = stmt->executeQuery("SELECT SUM(unique_movie_count) AS total_unique_movies FROM( SELECT COUNT(DISTINCT name) AS unique_movie_count FROM movies GROUP BY name) AS counts;");
+		if (res->next()) {
+			number = res->getInt("total_unique_movies");
+		}
+		else {
+			cerr << "No data found in the result set." << endl;
+		}
+		delete stmt;
+		delete res;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not get number of unique movies by name. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+	return number;
+}
+
 void MovieRepository::insertIntoDatabase(Movie& movie, Teathre& teathre, Auditorium& auditorium) {
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
@@ -107,6 +132,44 @@ void MovieRepository::insertIntoDatabase(Movie& movie, Teathre& teathre, Auditor
 	}
 	dbConnector.closeConnection(con);
 }
+
+Movie MovieRepository::loadMovie(int movieId) {
+	sql::Connection* con = dbConnector.establishConnection();
+	Movie movie;
+	try {
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT *, YEAR(launch_date) AS launch_date_year, MONTH(launch_date) as launch_date_month, DAY(launch_date) as launch_date_day FROM movies WHERE id = ?");
+		pstmt->setInt(1, movieId);
+		sql::ResultSet* res = pstmt->executeQuery();
+		if (res->next()) {
+			movie.setName(res->getString("name"));
+			movie.setFormat(res->getString("format"));
+			movie.setRating(res->getString("rating"));
+			movie.setDirector(res->getString("director"));
+			movie.setActors(res->getString("actors"));
+			movie.setTrailerURL(res->getString("trailer_url"));
+			movie.setGenre(res->getString("genre"));
+			movie.setLanguage(res->getString("language"));
+			movie.setProducer(res->getString("producer"));
+			movie.setCountry(res->getString("country"));
+			movie.setLaunchDate(Date(res->getInt("launch_date_year"), 
+									 res->getInt("launch_date_month"), 
+									 res->getInt("launch_date_day"))
+			);
+		}
+		else {
+			cerr << "Movie with ID " << movieId << " not found." << endl;
+		}
+		delete pstmt;
+		delete res;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not load movie. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+	return movie;
+}
+
 
 template <typename T>
 void MovieRepository::updateMovie(Movie& movie, const string& field, const T& value) {

@@ -32,6 +32,8 @@ public:
 	const string getProducer();
 	const string getCountry();
 	const Date getLaunchDate();
+	void setName(const string& newName);
+	void setTrailerURL(const string& newTrailerURL);
 	void setFormat(const string& newFormat);
 	void setRating(const string& newRating);
 	void setDirector(const string& newDirector);
@@ -56,8 +58,9 @@ private:
 public:
 	MovieRepository() {}
 	int getMovieID(Movie& movie, Auditorium& auditorium, Teathre& teathre);
+	int getNumberOfTotalUniqueMovies();
 	void insertIntoDatabase(Movie& movie, Teathre& teathre, Auditorium& auditorium);
-	//Movie loadMovie();
+	Movie loadMovie(int movieId);
 	template <typename T>
 	void updateMovie(Movie& movie, const string& field, const T& value);
 };
