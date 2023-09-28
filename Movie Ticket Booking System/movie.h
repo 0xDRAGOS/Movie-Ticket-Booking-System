@@ -33,7 +33,6 @@ public:
 	const string getCountry();
 	const Date getLaunchDate();
 	void setName(const string& newName);
-	void setTrailerURL(const string& newTrailerURL);
 	void setFormat(const string& newFormat);
 	void setRating(const string& newRating);
 	void setDirector(const string& newDirector);
@@ -47,9 +46,12 @@ public:
 };
 
 class MovieInterface {
+private:
+	DatabaseConnector dbConnector;
 public:
 	void displayMovie(Movie& movie);
 	void displayMovieExtended(Movie& movie);
+	void displayUniqueMovies();
 };
 
 class MovieRepository {
@@ -60,7 +62,7 @@ public:
 	int getMovieID(Movie& movie, Auditorium& auditorium, Teathre& teathre);
 	int getNumberOfTotalUniqueMovies();
 	void insertIntoDatabase(Movie& movie, Teathre& teathre, Auditorium& auditorium);
-	Movie loadMovie(int movieId);
+	Movie loadMovie(int movieID);
 	template <typename T>
 	void updateMovie(Movie& movie, const string& field, const T& value);
 };

@@ -28,5 +28,5 @@ public:
 
 class LoginInterface {
 public:
-	void displayLoginMenu(Login& login, LoginRepository& loginRep);
+	bool displayLoginMenu(Login& login, LoginRepository& loginRep);
 };

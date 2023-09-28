@@ -16,7 +16,6 @@ const string Movie::getCountry() { return country; }
 const Date Movie::getLaunchDate() { return launch_date; }
 
 void Movie::setName(const string& newName) { name = newName; };
-void Movie::setTrailerURL(const string& newTrailerURL) { trailer_url = newTrailerURL; };
 void Movie::setFormat(const string& newFormat) { format = newFormat; }
 void Movie::setRating(const string& newRating) { rating = newRating; }
 void Movie::setDirector(const string& newDirector) { director = newDirector; }
@@ -48,6 +47,41 @@ void MovieInterface::displayMovieExtended(Movie& movie) {
 	cout << "Producer: " << movie.getProducer() << endl;
 	cout << "Rating: " << movie.getRating() << endl;
 	cout << "Trailer: " << movie.getTrailerURL() << endl;
+}
+
+void MovieInterface::displayUniqueMovies() {
+	sql::Connection* con = dbConnector.establishConnection();
+	Movie movie;
+	int count = 0;
+	try {
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT m1.*, YEAR(launch_date) AS launch_date_year, MONTH(launch_date) as launch_date_month, DAY(launch_date) as launch_date_day FROM movies m1 WHERE m1.id = (SELECT MIN(m2.id) FROM movies m2 WHERE m2.name = m1.name);");
+		sql::ResultSet* res = pstmt->executeQuery();
+		while (res->next()) {
+			movie.setName(res->getString("name"));
+			movie.setFormat(res->getString("format"));
+			movie.setRating(res->getString("rating"));
+			movie.setDirector(res->getString("director"));
+			movie.setActors(res->getString("actors"));
+			movie.setTrailerURL(res->getString("trailer_url"));
+			movie.setGenre(res->getString("genre"));
+			movie.setLanguage(res->getString("language"));
+			movie.setProducer(res->getString("producer"));
+			movie.setCountry(res->getString("country"));
+			movie.setLaunchDate(Date(res->getInt("launch_date_year"),
+				res->getInt("launch_date_month"),
+				res->getInt("launch_date_day"))
+			);
+			this->displayMovie(movie);
+			cout << "Option: " << ++count << endl;
+		}
+		delete pstmt;
+		delete res;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not load movie. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
 }
 
 int MovieRepository::getMovieID(Movie& movie, Auditorium& auditorium, Teathre& teathre) {
@@ -133,12 +167,12 @@ void MovieRepository::insertIntoDatabase(Movie& movie, Teathre& teathre, Auditor
 	dbConnector.closeConnection(con);
 }
 
-Movie MovieRepository::loadMovie(int movieId) {
+Movie MovieRepository::loadMovie(int movieID) {
 	sql::Connection* con = dbConnector.establishConnection();
 	Movie movie;
 	try {
-		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT *, YEAR(launch_date) AS launch_date_year, MONTH(launch_date) as launch_date_month, DAY(launch_date) as launch_date_day FROM movies WHERE id = ?");
-		pstmt->setInt(1, movieId);
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT .*, YEAR(launch_date) AS launch_date_year, MONTH(launch_date) as launch_date_month, DAY(launch_date) as launch_date_day FROM movies WHERE id = ?);");
+		pstmt->setInt(1, movieID);
 		sql::ResultSet* res = pstmt->executeQuery();
 		if (res->next()) {
 			movie.setName(res->getString("name"));
@@ -157,7 +191,7 @@ Movie MovieRepository::loadMovie(int movieId) {
 			);
 		}
 		else {
-			cerr << "Movie with ID " << movieId << " not found." << endl;
+			cerr << "Movie not found." << endl;
 		}
 		delete pstmt;
 		delete res;

@@ -27,7 +27,7 @@ bool LoginRepository::validateLogin(Login& login) {
     return isValid;
 }
 
-void LoginInterface::displayLoginMenu(Login& login, LoginRepository& loginRep) {
+bool LoginInterface::displayLoginMenu(Login& login, LoginRepository& loginRep) {
     string inputEmail, inputPassword;
     bool isValid = false;
     cout << "^----------[LOGIN]----------^" << endl;
@@ -41,4 +41,5 @@ void LoginInterface::displayLoginMenu(Login& login, LoginRepository& loginRep) {
     }
     if (isValid) cout << "Logged in successfully!" << endl;
     cout << "_____________________________" << endl;
+    return isValid;
 }
