@@ -82,7 +82,7 @@ Movie MovieInterface::displayUniqueMovies() {
 			this->displayMovie(movie);
 			cout << "Option: " << ++count << endl;
 		}
-		cout << "Enter option between 1 and " << number << ":"; cin >> option;
+		cout << "Enter option between 1 and " << number << ": "; cin >> option;
 		while (option < 1 || option > number) {
 			cout << "Invalid option, retrying..." << endl;
 			cout << "Enter option: "; cin >> option;
@@ -99,6 +99,47 @@ Movie MovieInterface::displayUniqueMovies() {
 	Movie selectedMovie = movies[option - 1];
 	delete[] movies;
 	return selectedMovie;
+}
+
+Date MovieInterface::displayDateByMovieANDTheatre(Movie& movie, Theatre& theatre) {
+	TheatreRepository theatreRep;
+	MovieRepository movieRep;
+	Date* dates = nullptr;
+	int number = movieRep.getNumberOfDatesByMovieANDTheatre(movie, theatre);
+	int count = 0;
+	int option;
+	sql::Connection* con = dbConnector.establishConnection();
+	try {
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT YEAR(movie_broadcast.broadcast_date) as broadcast_year, MONTH(movie_broadcast.broadcast_date) as broadcast_month, DAY(movie_broadcast.broadcast_date) as broadcast_day, HOUR(movie_broadcast.broadcast_date) as broadcast_hour, MINUTE(movie_broadcast.broadcast_date) as broadcast_minute from movie_broadcast JOIN movies ON movies.id = movie_broadcast.movie_id WHERE theatre_id = ? AND name = ?;");
+		pstmt->setInt(1, theatreRep.getTheatreID(theatre));
+		pstmt->setString(2, movie.getName());
+		sql::ResultSet* res = pstmt->executeQuery();
+		while (res->next()){
+			Date date(res->getInt("broadcast_year"), res->getInt("broadcast_month"), res->getInt("broadcast_day"), res->getInt("broadcast_hour"), res->getInt("broadcast_minute"));
+			if (count == 0) {
+				dates = new Date[number];
+			}
+			dates[count] = date;
+			date.displayDateHoursMinutes();
+			cout << " - Option: " << ++count << endl;
+		}
+		cout << "Enter option between 1 and " << number << ": "; cin >> option;
+		while (option < 1 || option > number) {
+			cout << "Invalid option, retrying..." << endl;
+			cout << "Enter option: "; cin >> option;
+		}
+		delete pstmt;
+		delete res;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not display dates by movie and theatre. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+
+	Date selectedDate = dates[option - 1];
+	delete[] dates;
+	return selectedDate;
 }
 
 int MovieRepository::getMovieID(Movie& movie, Auditorium& auditorium, Theatre& theatre) {
@@ -143,6 +184,32 @@ int MovieRepository::getNumberOfTotalUniqueMovies() {
 	}
 	catch (sql::SQLException& e) {
 		cerr << "Could not get number of unique movies by name. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+	return number;
+}
+
+int MovieRepository::getNumberOfDatesByMovieANDTheatre(Movie& movie, Theatre& theatre) {
+	TheatreRepository theatreRep;
+	int number = 0;
+	sql::Connection* con = dbConnector.establishConnection();
+	try {
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT count(broadcast_date) as total FROM movie_broadcast JOIN movies ON movies.id = movie_broadcast.movie_id WHERE theatre_id = ? and name = ?;");
+		pstmt->setInt(1, theatreRep.getTheatreID(theatre));
+		pstmt->setString(2, movie.getName());
+		sql::ResultSet* res = pstmt->executeQuery();
+		if (res->next()) {
+			number = res->getInt("total");
+		}
+		else {
+			cerr << "No data found in the result set." << endl;
+		}
+		delete pstmt;
+		delete res;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not get number of dates by movie and theatre. Error: " << e.what() << endl;
 		exit(1);
 	}
 	dbConnector.closeConnection(con);

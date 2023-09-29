@@ -38,6 +38,7 @@ class TheatreInterface {
 private:
 	DatabaseConnector dbConnector;
 public:
+	void displayTheatre(Theatre& theatre);
 	Theatre displayTheatres();
 };
 

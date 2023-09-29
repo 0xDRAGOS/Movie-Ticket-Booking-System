@@ -10,7 +10,7 @@ Theatre::~Theatre() {
 
 const string Theatre::getName() { return name; };
 const Address Theatre::getAddress() { return address; };
-void Theatre::setName(const string& newName) { this->name = name; };
+void Theatre::setName(const string& newName) { this->name = newName; };
 void Theatre::setAddress(const Address& newAddress) { this->address = newAddress; };
 
 void Theatre::addAuditorium(const Auditorium& auditorium) {
@@ -21,7 +21,12 @@ void Theatre::addMovie(const Movie& movie) {
 	movies[movies_number++] = movie;
 }
 
+void TheatreInterface::displayTheatre(Theatre& theatre) {
+	cout << theatre.getName() << " | ";
+}
+
 Theatre TheatreInterface::displayTheatres() {
+	TheatreInterface theatreInt;
 	TheatreRepository theatreRep;
 	Theatre theatre;
 	Theatre* theatres = nullptr;
@@ -44,12 +49,14 @@ Theatre TheatreInterface::displayTheatres() {
 			getline(iss, number, ',');
 			theatre.setAddress(Address(country, county, city, street, number));
 
+			theatreInt.displayTheatre(theatre);
 			if (count == 0) {
 				theatres = new Theatre[total_theatres];
 			}
 			theatres[count] = theatre;
+			count++;
 		}
-		cout << "Enter option between 1 and " << total_theatres << ":"; cin >> option;
+		cout << endl << "Enter option between 1 and " << total_theatres << ": "; cin >> option;
 		while (option < 1 || option > total_theatres) {
 			cout << "Invalid option, retrying..." << endl;
 			cout << "Enter option: "; cin >> option;
@@ -75,7 +82,13 @@ int TheatreRepository::getTheatreID(Theatre& theatre) {
 		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT id FROM theatres WHERE name = ?;");
 		pstmt->setString(1, theatre.getName());
 		sql::ResultSet* res = pstmt->executeQuery();
-		id = res->getInt("id");
+
+		if (res->next()) {
+			id = res->getInt("id");
+		}
+		else {
+			cerr << "No data found for theatre: " << theatre.getName() << endl;
+		}
 		delete pstmt;
 		delete res;
 	}

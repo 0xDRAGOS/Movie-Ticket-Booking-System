@@ -35,13 +35,18 @@ void displayProgram() {
 }
 
 int main() {
+	Date selectedDate;
+
+	Theatre theatre;
+	Theatre selectedTheatre;
+	TheatreInterface theatreInt;
 
 	Login login;
 	LoginRepository loginRep;
 	LoginInterface loginInt;
-
-	Movie selectedMovie;
+	
 	Movie movie;
+	Movie selectedMovie;
 	MovieRepository movieRep;
 	MovieInterface movieInt;
 
@@ -54,6 +59,8 @@ int main() {
 			selectedMovie = movieInt.displayUniqueMovies();
 			cout << "----------------------------------------------------------------------------------------------------------" << endl;
 			movieInt.displayMovieExtended(selectedMovie);
+			selectedTheatre = theatreInt.displayTheatres();
+			selectedDate = movieInt.displayDateByMovieANDTheatre(selectedMovie, selectedTheatre);
 			break;
 		case 2:
 			displayProgram();

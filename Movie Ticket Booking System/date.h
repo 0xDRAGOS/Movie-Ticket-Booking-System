@@ -11,13 +11,18 @@ private:
     int day;
     int month;
     int year;
+    int hour;
+    int minute;
 public:
-    Date(int day = 1, int month = 1, int year = 1);
+    Date(int day = 1, int month = 1, int year = 1, int hour = 0, int minute = 0);
     int getYear() const;
     int getMonth() const;
     int getDay() const;
+    int getHour() const;
+    int getMinute() const;
     void readDate();
     void displayDate();
+    void displayDateHoursMinutes();
     Date& operator= (const Date& d);
     friend ostream& operator<<(ostream& os, const Date& d);
     friend istream& operator>>(istream& is, Date& d);
