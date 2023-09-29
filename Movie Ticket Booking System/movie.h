@@ -1,10 +1,10 @@
 #pragma once
 #include "auditorium.h"
-#include "teathre.h"
+#include "theatre.h"
 #include "date.h"
 
 class Auditorium;
-class Teathre;
+class Theatre;
 
 class Movie {
 private:
@@ -51,7 +51,7 @@ private:
 public:
 	void displayMovie(Movie& movie);
 	void displayMovieExtended(Movie& movie);
-	void displayUniqueMovies();
+	Movie displayUniqueMovies();
 };
 
 class MovieRepository {
@@ -59,9 +59,9 @@ private:
 	DatabaseConnector dbConnector;
 public:
 	MovieRepository() {}
-	int getMovieID(Movie& movie, Auditorium& auditorium, Teathre& teathre);
+	int getMovieID(Movie& movie, Auditorium& auditorium, Theatre& theatre);
 	int getNumberOfTotalUniqueMovies();
-	void insertIntoDatabase(Movie& movie, Teathre& teathre, Auditorium& auditorium);
+	void insertIntoDatabase(Movie& movie, Theatre& theatre, Auditorium& auditorium);
 	Movie loadMovie(int movieID);
 	template <typename T>
 	void updateMovie(Movie& movie, const string& field, const T& value);

@@ -1,8 +1,8 @@
 #pragma once
 #include "database_connection.h"
-#include "teathre.h"
+#include "theatre.h"
 
-class Teathre;
+class Theatre;
 
 class Auditorium {
 private:
@@ -26,7 +26,7 @@ private:
 	DatabaseConnector dbConnector;
 public:
 	AuditoriumRepository() {}
-	int getAuditoriumID(Auditorium& auditorium, Teathre& teathre);
-	void updateAuditorium(Auditorium& auditorium, Teathre& teathre, const string& field, const int& value);
-	void insertIntoDatabase(Auditorium& auditorium, Teathre& teathre);
+	int getAuditoriumID(Auditorium& auditorium, Theatre& theatre);
+	void updateAuditorium(Auditorium& auditorium, Theatre& theatre, const string& field, const int& value);
+	void insertIntoDatabase(Auditorium& auditorium, Theatre& theatre);
 };

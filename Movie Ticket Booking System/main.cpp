@@ -1,7 +1,7 @@
 #include "login.h"
 #include "movie.h"
 #include "auditorium.h"
-#include "teathre.h"
+#include "theatre.h"
 #include "public_user.h"
 #include "private_user.h"
 
@@ -40,6 +40,7 @@ int main() {
 	LoginRepository loginRep;
 	LoginInterface loginInt;
 
+	Movie selectedMovie;
 	Movie movie;
 	MovieRepository movieRep;
 	MovieInterface movieInt;
@@ -50,16 +51,9 @@ int main() {
 	while (!exitMenu) {
 		switch (displayMainOptions()) {
 		case 1:
-			int option;
-			movieInt.displayUniqueMovies();
-			cout << "Enter option between 1 and " << movieRep.getNumberOfTotalUniqueMovies() << ":"; cin >> option;
-			while (option < 1 || option > 4) {
-				cout << "Invalid option, retrying..." << endl;
-				cout << "Enter option: "; cin >> option;
-			}
-			switch (option) {
-				
-			}
+			selectedMovie = movieInt.displayUniqueMovies();
+			cout << "----------------------------------------------------------------------------------------------------------" << endl;
+			movieInt.displayMovieExtended(selectedMovie);
 			break;
 		case 2:
 			displayProgram();

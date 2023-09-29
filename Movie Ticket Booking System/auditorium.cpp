@@ -31,15 +31,15 @@ void Auditorium::changeSeatStatus(bool status, int row, int column) {
 	}
 }
 
-int AuditoriumRepository::getAuditoriumID(Auditorium& auditorium, Teathre& teathre) {
+int AuditoriumRepository::getAuditoriumID(Auditorium& auditorium, Theatre& theatre) {
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
-		int id, teathre_id;
-		TeathreRepository teathreRep;
-		teathre_id = teathreRep.getTeathreID(teathre);
-		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT id FROM auditoriums WHERE auditorium_number = ? AND teathre_id = ?;");
+		int id, theatre_id;
+		TheatreRepository theatreRep;
+		theatre_id = theatreRep.getTheatreID(theatre);
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT id FROM auditoriums WHERE auditorium_number = ? AND theatre_id = ?;");
 		pstmt->setInt(1, auditorium.getAuditoriumNumber());
-		pstmt->setInt(2, teathre_id);
+		pstmt->setInt(2, theatre_id);
 		sql::ResultSet* res = pstmt->executeQuery();
 		id = res->getInt("id");
 		delete pstmt;
@@ -52,16 +52,16 @@ int AuditoriumRepository::getAuditoriumID(Auditorium& auditorium, Teathre& teath
 	dbConnector.closeConnection(con);
 }
 
-void AuditoriumRepository::updateAuditorium(Auditorium& auditorium, Teathre& teathre, const string& field, const int& value) {
+void AuditoriumRepository::updateAuditorium(Auditorium& auditorium, Theatre& theatre, const string& field, const int& value) {
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
-		TeathreRepository teathreRep;
-		int teathre_id = teathreRep.getTeathreID(teathre);
-		const string query = "UPDATE auditoriums SET " + field + " = ? WHERE auditorium_number = ? AND teathre_id = ?;";
+		TheatreRepository theatreRep;
+		int theatre_id = theatreRep.getTheatreID(theatre);
+		const string query = "UPDATE auditoriums SET " + field + " = ? WHERE auditorium_number = ? AND theatre_id = ?;";
 		sql::PreparedStatement* pstmt = con->prepareStatement(query);
 		pstmt->setInt(1, value);
 		pstmt->setInt(2, auditorium.getAuditoriumNumber());
-		pstmt->setInt(3, teathre_id);
+		pstmt->setInt(3, theatre_id);
 		int rowsUpdated = pstmt->executeUpdate();
 
 		if (rowsUpdated > 0) {
@@ -81,13 +81,13 @@ void AuditoriumRepository::updateAuditorium(Auditorium& auditorium, Teathre& tea
 	dbConnector.closeConnection(con);
 }
 
-void AuditoriumRepository::insertIntoDatabase(Auditorium& auditorium, Teathre& teathre) {
+void AuditoriumRepository::insertIntoDatabase(Auditorium& auditorium, Theatre& theatre) {
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
-		TeathreRepository teathreRep;
-		int teathre_id = teathreRep.getTeathreID(teathre);
-		sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO auditoriums (teathre_id, auditorium_number, seats_number) VALUES (?, ?, ?);");
-		pstmt->setInt(1, teathre_id);
+		TheatreRepository theatreRep;
+		int theatre_id = theatreRep.getTheatreID(theatre);
+		sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO auditoriums (theatre_id, auditorium_number, seats_number) VALUES (?, ?, ?);");
+		pstmt->setInt(1, theatre_id);
 		pstmt->setInt(2, auditorium.getAuditoriumNumber());
 		pstmt->setInt(3, auditorium.getSeatNumber());
 		pstmt->executeUpdate();

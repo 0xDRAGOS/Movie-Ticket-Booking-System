@@ -62,7 +62,7 @@
     <ClInclude Include="database_connection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="teathre.h">
+    <ClInclude Include="theatre.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="date.h">

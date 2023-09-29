@@ -1,9 +1,9 @@
 #pragma once
-#include "teathre.h"
+#include "theatre.h"
 #include "public_user.h"
 
 class Movie;
-class Teathre;
+class Theatre;
 class Auditorium;
 
 class Ticket {
@@ -20,7 +20,7 @@ private:
 	DatabaseConnector dbConnector;
 public:
 	TicketRepository() {}
-	int getTicketID(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Teathre& teathre);
-	void insertIntoDatabase(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Teathre& teathre, double& price);
-	void updateTicketPrice(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Teathre& teathre, double& newPrice);
+	int getTicketID(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre);
+	void insertIntoDatabase(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre, double& price);
+	void updateTicketPrice(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre, double& newPrice);
 };

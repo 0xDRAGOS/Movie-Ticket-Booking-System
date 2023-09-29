@@ -7,14 +7,14 @@ double Ticket::getPrice() { return price; };
 
 void Ticket::setPrice(double& newPrice) { this->price = newPrice; };
 
-int TicketRepository::getTicketID(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Teathre& teathre) {
+int TicketRepository::getTicketID(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre) {
 	sql::Connection* con = dbConnector.establishConnection();
 	int id;
 	try {
 		PublicUserRepository userRep;
 		int user_id = userRep.getPublicUserID(user);
 		MovieRepository movieRep;
-		int movie_id = movieRep.getMovieID(movie, auditorium, teathre);
+		int movie_id = movieRep.getMovieID(movie, auditorium, theatre);
 		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT id FROM tickets WHERE user_id = ? AND movie_id = ? and price = ?;");
 		pstmt->setInt(1, user_id);
 		pstmt->setInt(2, movie_id);
@@ -32,13 +32,13 @@ int TicketRepository::getTicketID(Ticket& ticket, PublicUser& user, Movie& movie
 	return id;
 }
 
-void TicketRepository::insertIntoDatabase(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Teathre& teathre, double& price) {
+void TicketRepository::insertIntoDatabase(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre, double& price) {
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
 		PublicUserRepository userRep;
 		int user_id = userRep.getPublicUserID(user);
 		MovieRepository movieRep;
-		int movie_id = movieRep.getMovieID(movie, auditorium, teathre);
+		int movie_id = movieRep.getMovieID(movie, auditorium, theatre);
 		sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO tickets (user_id, movie_id, price) VALUES(?, ?, ?);");
 		pstmt->setInt(1, user_id);
 		pstmt->setInt(2, movie_id);
@@ -53,11 +53,11 @@ void TicketRepository::insertIntoDatabase(Ticket& ticket, PublicUser& user, Movi
 	dbConnector.closeConnection(con);
 }
 
-void TicketRepository::updateTicketPrice(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Teathre& teathre, double& newPrice) {
+void TicketRepository::updateTicketPrice(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre, double& newPrice) {
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
 		TicketRepository ticketRep;
-		int ticket_id = ticketRep.getTicketID(ticket, user, movie, auditorium, teathre);
+		int ticket_id = ticketRep.getTicketID(ticket, user, movie, auditorium, theatre);
 		sql::PreparedStatement* pstmt = con->prepareStatement("UPDATE tickets SET price = ? WHERE id = ?;");
 		pstmt->setDouble(1, newPrice);
 		pstmt->setInt(2, ticket_id);

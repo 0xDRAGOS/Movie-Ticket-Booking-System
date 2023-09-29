@@ -49,10 +49,14 @@ void MovieInterface::displayMovieExtended(Movie& movie) {
 	cout << "Trailer: " << movie.getTrailerURL() << endl;
 }
 
-void MovieInterface::displayUniqueMovies() {
-	sql::Connection* con = dbConnector.establishConnection();
+Movie MovieInterface::displayUniqueMovies() {
+	MovieRepository movieRep;
+	Movie* movies = nullptr;
 	Movie movie;
+	int number = movieRep.getNumberOfTotalUniqueMovies();
 	int count = 0;
+	int option;
+	sql::Connection* con = dbConnector.establishConnection();
 	try {
 		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT m1.*, YEAR(launch_date) AS launch_date_year, MONTH(launch_date) as launch_date_month, DAY(launch_date) as launch_date_day FROM movies m1 WHERE m1.id = (SELECT MIN(m2.id) FROM movies m2 WHERE m2.name = m1.name);");
 		sql::ResultSet* res = pstmt->executeQuery();
@@ -71,30 +75,43 @@ void MovieInterface::displayUniqueMovies() {
 				res->getInt("launch_date_month"),
 				res->getInt("launch_date_day"))
 			);
+			if (count == 0) {
+				movies = new Movie[number];
+			}
+			movies[count] = movie;
 			this->displayMovie(movie);
 			cout << "Option: " << ++count << endl;
+		}
+		cout << "Enter option between 1 and " << number << ":"; cin >> option;
+		while (option < 1 || option > number) {
+			cout << "Invalid option, retrying..." << endl;
+			cout << "Enter option: "; cin >> option;
 		}
 		delete pstmt;
 		delete res;
 	}
 	catch (sql::SQLException& e) {
-		cerr << "Could not load movie. Error: " << e.what() << endl;
+		cerr << "Could not display unique movies. Error: " << e.what() << endl;
 		exit(1);
 	}
 	dbConnector.closeConnection(con);
+
+	Movie selectedMovie = movies[option - 1];
+	delete[] movies;
+	return selectedMovie;
 }
 
-int MovieRepository::getMovieID(Movie& movie, Auditorium& auditorium, Teathre& teathre) {
+int MovieRepository::getMovieID(Movie& movie, Auditorium& auditorium, Theatre& theatre) {
 	sql::Connection* con = dbConnector.establishConnection();
 	int id;
 	try {
-		TeathreRepository teathreRep;
-		int teathre_id = teathreRep.getTeathreID(teathre);
+		TheatreRepository theatreRep;
+		int theatre_id = theatreRep.getTheatreID(theatre);
 		AuditoriumRepository auditoriumRep;
-		int auditorium_id = auditoriumRep.getAuditoriumID(auditorium, teathre);
-		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT id FROM movies WHERE name = ? AND teathre_id = ? AND auditorium_id = ?;");
+		int auditorium_id = auditoriumRep.getAuditoriumID(auditorium, theatre);
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT id FROM movies WHERE name = ? AND theatre_id = ? AND auditorium_id = ?;");
 		pstmt->setString(1, movie.getName());
-		pstmt->setInt(2, teathre_id);
+		pstmt->setInt(2, theatre_id);
 		pstmt->setInt(3, auditorium_id);
 		sql::ResultSet* res = pstmt->executeQuery();
 		id = res->getInt("id");
@@ -132,17 +149,17 @@ int MovieRepository::getNumberOfTotalUniqueMovies() {
 	return number;
 }
 
-void MovieRepository::insertIntoDatabase(Movie& movie, Teathre& teathre, Auditorium& auditorium) {
+void MovieRepository::insertIntoDatabase(Movie& movie, Theatre& theatre, Auditorium& auditorium) {
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
-		TeathreRepository teathreRep;
-		int teathre_id = teathreRep.getTeathreID(teathre);
+		TheatreRepository theatreRep;
+		int theatre_id = theatreRep.getTheatreID(theatre);
 		AuditoriumRepository auditoriumRep;
-		int auditorium_id = auditoriumRep.getAuditoriumID(auditorium, teathre);
-		sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO movies (teathre_id, auditorium_id, name, format, rating, director, actors, trailer_url, genre, language, producer, country, launch_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+		int auditorium_id = auditoriumRep.getAuditoriumID(auditorium, theatre);
+		sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO movies (theatre_id, auditorium_id, name, format, rating, director, actors, trailer_url, genre, language, producer, country, launch_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 		Date launchDate = movie.getLaunchDate();
 		string launchDateString = to_string(launchDate.getYear()) + "-" + to_string(launchDate.getMonth()) + "-" + to_string(launchDate.getDay());
-		pstmt->setInt(1, teathre_id);
+		pstmt->setInt(1, theatre_id);
 		pstmt->setInt(2, auditorium_id);
 		pstmt->setString(3, movie.getName());
 		pstmt->setString(4, movie.getFormat());
