@@ -148,7 +148,7 @@ int TicketRepository::getTicketID(Ticket& ticket, PublicUser& user, Movie& movie
 	return id;
 }
 
-void TicketRepository::insertIntoDatabase(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre, double& price) {
+void TicketRepository::insertIntoDatabase(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre) {
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
 		PublicUserRepository userRep;

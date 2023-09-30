@@ -19,7 +19,7 @@ int displayMainOptions() {
 	return option;
 }
 
-void displayProgram() {
+void displayTariffs() {
 	cout << "Ticket type:                                   2D MOVIE                               3D MOVIE            " << endl;
 	cout << "----------------------------------------------------------------------------------------------------------" << endl;
 	cout << "                                 Monday - Thursday   Friday - Sunday   Monday - Thursday   Friday - Sunday" << endl;
@@ -39,6 +39,7 @@ int main() {
 	Date selectedDate;
 
 	PublicUser publicUser;
+	PublicUser loadedPublicUser;
 
 	PrivateUser privateUser;
 
@@ -92,7 +93,7 @@ int main() {
 				auditoriumInt.displayAuditoriumSeats(selectedAuditorium);
 				auditoriumInt.displaySelectSeat(selectedAuditorium);
 				ticket = ticketInt.displayCalculateTicketPriceBasedOnOptions();
-				
+				ticketRep.insertIntoDatabase(ticket, loadedPublicUser, selectedMovie, selectedAuditorium, selectedTheatre);
 
 				//auditoriumInt.displayAuditoriumSeats(selectedAuditorium);
 
@@ -100,7 +101,7 @@ int main() {
 
 			break;
 		case 2:
-			displayProgram();
+			displayTariffs();
 			break;
 		case 3:
 			if (!loggedIn) {
