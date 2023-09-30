@@ -27,6 +27,6 @@ private:
 public:
 	TicketRepository() {}
 	int getTicketID(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre);
-	void insertIntoDatabase(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre);
+	bool insertIntoDatabase(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre);
 	void updateTicketPrice(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre, double& newPrice);
 };

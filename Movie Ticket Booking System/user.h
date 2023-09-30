@@ -17,13 +17,15 @@ protected:
 	string firstName;
 	string email;
 	string password;
+	bool loggedIn;
 public:
-	User(const string& lastName = "", const string& firstName = "", const string& email = "", const string& password = "");
+	User(const string& lastName = "", const string& firstName = "", const string& email = "", const string& password = "", const bool& loggedIn = false);
 	virtual ~User() {}
 	const string getFirstName();
 	const string getLastName();
 	const string getEmail();
 	const string getPassword();
+	const bool getLoggedInStatus();
 	void setFirstName(string& newFirstName);
 	void setLastName(string& newLastName);
 	void setEmail(string& newEmail);

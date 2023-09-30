@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 #include "database_connection.h"
+#include "public_user.h"
+#include "private_user.h"
 #define MAX_LOGIN_ATTEMPTS 3
 using std::string;
 using std::cerr;
@@ -29,5 +31,6 @@ public:
 
 class LoginInterface {
 public:
-	bool displayLoginMenu(Login& login, LoginRepository& loginRep);
+	PublicUser displayLoginMenuPublicUser(Login& login, LoginRepository& loginRep);
+	PrivateUser displayLoginMenuPrivateUser(Login& login, LoginRepository& loginRep);
 };

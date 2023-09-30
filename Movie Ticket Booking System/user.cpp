@@ -1,12 +1,13 @@
 #include "user.h"
 
-User::User(const string& lastName, const string& firstName, const string& email, const string& password)
+User::User(const string& lastName, const string& firstName, const string& email, const string& password, const bool& loggedIn)
 	: lastName(lastName), firstName(firstName), email(email), password(password) {}
 
-const string User::getFirstName() { return firstName; };
-const string User::getLastName() { return lastName; };
-const string User::getEmail() { return email; };
-const string User::getPassword() { return password; };
+const string User::getFirstName() { return firstName; }
+const string User::getLastName() { return lastName; }
+const string User::getEmail() { return email; }
+const string User::getPassword() { return password; }
+const bool User::getLoggedInStatus() { return loggedIn; }
 
 void User::setFirstName(string& newFirstName) { this->firstName = newFirstName; }
 void User::setLastName(string& newLastName) { this->lastName = newLastName; }

@@ -38,7 +38,10 @@ int PublicUserRepository::getPublicUserID(PublicUser& user) {
 		pstmt->setString(1, user.getEmail());
 		pstmt->setString(2, user.getPassword());
 		sql::ResultSet* res = pstmt->executeQuery();
-		id = res->getInt("id");
+		if (res->next()) {
+			id = res->getInt("id");
+		}
+		else cout << "No data found" << endl;
 		delete pstmt;
 		delete res;
 	}

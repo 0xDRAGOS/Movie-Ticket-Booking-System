@@ -148,7 +148,8 @@ int TicketRepository::getTicketID(Ticket& ticket, PublicUser& user, Movie& movie
 	return id;
 }
 
-void TicketRepository::insertIntoDatabase(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre) {
+bool TicketRepository::insertIntoDatabase(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre) {
+	bool status = false;
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
 		PublicUserRepository userRep;
@@ -161,12 +162,14 @@ void TicketRepository::insertIntoDatabase(Ticket& ticket, PublicUser& user, Movi
 		pstmt->setDouble(3, ticket.getPrice());
 		pstmt->executeUpdate();
 		delete pstmt;
+		status = true;
 	}
 	catch (sql::SQLException& e) {
 		cerr << "Could not insert ticket into database. Error: " << e.what() << endl;
 		exit(1);
 	}
 	dbConnector.closeConnection(con);
+	return status;
 }
 
 void TicketRepository::updateTicketPrice(Ticket& ticket, PublicUser& user, Movie& movie, Auditorium& auditorium, Theatre& theatre, double& newPrice) {

@@ -7,9 +7,9 @@ public:
 };
 
 class PrivateUserRepository {
-public:
-	DatabaseConnector dbConnector;
 private:
+	DatabaseConnector dbConnector;
+public:
 	PrivateUserRepository() {}
 	PrivateUser loadPrivateUser(const string& inputEmail, const string& inputPassword);
 };

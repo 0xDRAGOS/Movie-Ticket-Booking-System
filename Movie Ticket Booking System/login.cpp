@@ -21,13 +21,13 @@ bool LoginRepository::validateLogin(Login& login) {
         delete res;
     }
     catch (sql::SQLException& e) {
-        cerr << "Error while validating login: " << e.what() << endl;
+        cerr << "Could not validate logn. Error: " << e.what() << endl;
     }
     dbConnector.closeConnection(con);
     return isValid;
 }
 
-bool LoginInterface::displayLoginMenu(Login& login, LoginRepository& loginRep) {
+PublicUser LoginInterface::displayLoginMenuPublicUser(Login& login, LoginRepository& loginRep) {
     string inputEmail, inputPassword;
     int loginAttempts = 0;
     bool isValid = false;
@@ -38,7 +38,7 @@ bool LoginInterface::displayLoginMenu(Login& login, LoginRepository& loginRep) {
 
         login = Login(inputEmail, inputPassword);
         if (isValid = loginRep.validateLogin(login)) {
-            cout << "Logged in successfully!" << endl;
+            cout << "Logged in successfully as an usual user!" << endl;
         }
         else {
             cout << "Wrong email/password, retrying..." << endl;
@@ -47,5 +47,38 @@ bool LoginInterface::displayLoginMenu(Login& login, LoginRepository& loginRep) {
     }
     if (loginAttempts == MAX_LOGIN_ATTEMPTS) cout << "Maximum login attempts reached. Exiting... " << endl;
     cout << "_____________________________" << endl;
-    return isValid;
+    
+    if (isValid && loginAttempts < MAX_LOGIN_ATTEMPTS) {
+        PublicUserRepository publicUserRep;
+        PublicUser publicUser = publicUserRep.loadPublicUser(login.getInputEmail(), login.getInputPassword());
+        return publicUser;
+    }
+}
+
+PrivateUser LoginInterface::displayLoginMenuPrivateUser(Login& login, LoginRepository& loginRep) {
+    string inputEmail, inputPassword;
+    int loginAttempts = 0;
+    bool isValid = false;
+    cout << "^----------[LOGIN]----------^" << endl;
+    while (!isValid && loginAttempts < MAX_LOGIN_ATTEMPTS) {
+        cout << "| Enter email: "; cin >> inputEmail;
+        cout << "| Enter password: "; cin >> inputPassword;
+
+        login = Login(inputEmail, inputPassword);
+        if (isValid = loginRep.validateLogin(login)) {
+            cout << "Logged in successfully as an administrator!" << endl;
+        }
+        else {
+            cout << "Wrong email/password, retrying..." << endl;
+            loginAttempts++;
+        }
+    }
+    if (loginAttempts == MAX_LOGIN_ATTEMPTS) cout << "Maximum login attempts reached. Exiting... " << endl;
+    cout << "_____________________________" << endl;
+    
+    if (isValid && loginAttempts < MAX_LOGIN_ATTEMPTS) {
+        PrivateUserRepository privateUserRep;
+        PrivateUser privateUser = privateUserRep.loadPrivateUser(login.getInputEmail(), login.getInputPassword());
+        return privateUser;
+    }
 }

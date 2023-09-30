@@ -157,7 +157,11 @@ int MovieRepository::getMovieID(Movie& movie, Auditorium& auditorium, Theatre& t
 		pstmt->setInt(2, theatre_id);
 		pstmt->setInt(3, auditorium_id);
 		sql::ResultSet* res = pstmt->executeQuery();
-		id = res->getInt("id");
+		if (res->next()) {
+			id = res->getInt("id");
+		}
+		else cout << "No data found. " << endl;
+		
 		delete pstmt;
 		delete res;
 	}

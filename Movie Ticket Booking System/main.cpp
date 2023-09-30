@@ -38,10 +38,10 @@ void displayTariffs() {
 int main() {
 	Date selectedDate;
 
-	PublicUser publicUser;
+	PublicUserRepository publicUserRep;
 	PublicUser loadedPublicUser;
 
-	PrivateUser privateUser;
+	PrivateUser loadedPrivateUser;
 
 	Auditorium auditorium;
 	Auditorium selectedAuditorium;
@@ -80,12 +80,25 @@ int main() {
 			selectedAuditorium = auditoriumInt.displayAuditoriums(selectedMovie, selectedTheatre);
 			selectedDate = movieInt.displayDates(selectedMovie, selectedAuditorium, selectedTheatre);
 
+			int option;
 			if (!loggedIn) {
-				if (loginInt.displayLoginMenu(login, loginRep)) {
-					loggedIn = true;
+				cout << "Login in as an usual user / Login as an administrator (1/2)" << endl;
+				cout << "Enter option: ";  cin >> option;
+				while (option < 1 || option > 2) {
+					cout << "Invalid option, retrying..." << endl;
+					cout << "Enter option: ";  cin >> option;
 				}
-				else {
-					exitMenu = true;
+				switch (option) {
+				case 1:
+					loadedPublicUser = loginInt.displayLoginMenuPublicUser(login, loginRep);
+					if (loadedPublicUser.getLoggedInStatus())
+						loggedIn = true;
+					break;
+				case 2:
+					loadedPrivateUser = loginInt.displayLoginMenuPrivateUser(login, loginRep);
+					if (loadedPrivateUser.getLoggedInStatus())
+						loggedIn = true;
+					break;
 				}
 			}
 
@@ -93,23 +106,34 @@ int main() {
 				auditoriumInt.displayAuditoriumSeats(selectedAuditorium);
 				auditoriumInt.displaySelectSeat(selectedAuditorium);
 				ticket = ticketInt.displayCalculateTicketPriceBasedOnOptions();
-				ticketRep.insertIntoDatabase(ticket, loadedPublicUser, selectedMovie, selectedAuditorium, selectedTheatre);
-
-				//auditoriumInt.displayAuditoriumSeats(selectedAuditorium);
-
+				if (ticketRep.insertIntoDatabase(ticket, loadedPublicUser, selectedMovie, selectedAuditorium, selectedTheatre)) {
+					cout << "Your ticket has been successfully registered." << endl;
+				}
 			}
-
 			break;
 		case 2:
 			displayTariffs();
 			break;
 		case 3:
+			int login_option;
 			if (!loggedIn) {
-				if (loginInt.displayLoginMenu(login, loginRep)) {
-					loggedIn = true;
+				cout << "Login in as an usual user / Login as an administrator (1/2)" << endl;
+				cout << "Enter option: ";  cin >> login_option;
+				while (login_option < 1 || login_option > 2) {
+					cout << "Invalid option, retrying..." << endl;
+					cout << "Enter option: ";  cin >> login_option;
 				}
-				else {
-					exitMenu = true;
+				switch (login_option) {
+				case 1:
+					loadedPublicUser = loginInt.displayLoginMenuPublicUser(login, loginRep);
+					if (loadedPublicUser.getLoggedInStatus())
+						loggedIn = true;
+					break;
+				case 2:
+					loadedPrivateUser = loginInt.displayLoginMenuPrivateUser(login, loginRep);
+					if (loadedPrivateUser.getLoggedInStatus())
+						loggedIn = true;
+					break;
 				}
 			}
 			else cout << "You are already logged in. " << endl;
