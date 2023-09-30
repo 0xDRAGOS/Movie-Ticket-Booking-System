@@ -8,6 +8,17 @@ int Date::getMonth() const { return month; };
 int Date::getDay() const { return day; };
 int Date::getMinute() const { return minute; };
 int Date::getHour() const { return hour; };
+int Date::getLocalTimeDayOfWeek() const {
+    SYSTEMTIME lt;
+    GetLocalTime(&lt);
+    return lt.wDayOfWeek;
+}
+int Date::getLocalTimeHour() const {
+    SYSTEMTIME lt;
+    GetLocalTime(&lt);
+    return lt.wHour;
+}
+
 
 void Date::readDate() {
     cout << "Year: ";

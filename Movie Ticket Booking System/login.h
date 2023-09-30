@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "database_connection.h"
+#define MAX_LOGIN_ATTEMPTS 3
 using std::string;
 using std::cerr;
 using std::endl;

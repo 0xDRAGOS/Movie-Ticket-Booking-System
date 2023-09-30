@@ -1,4 +1,5 @@
 #include "login.h"
+#include "ticket.h"
 #include "movie.h"
 #include "auditorium.h"
 #include "theatre.h"
@@ -37,6 +38,15 @@ void displayProgram() {
 int main() {
 	Date selectedDate;
 
+	PublicUser publicUser;
+
+	PrivateUser privateUser;
+
+	Auditorium auditorium;
+	Auditorium selectedAuditorium;
+	AuditoriumRepository auditoriumRep;
+	AuditoriumInterface auditoriumInt;
+
 	Theatre theatre;
 	Theatre selectedTheatre;
 	TheatreInterface theatreInt;
@@ -50,8 +60,14 @@ int main() {
 	MovieRepository movieRep;
 	MovieInterface movieInt;
 
+	Ticket ticket;
+	TicketRepository ticketRep;
+	TicketInterface ticketInt;
+
 	bool loggedIn = false;
 	bool exitMenu = false;
+
+	int loginAttempts = 0;
 
 	while (!exitMenu) {
 		switch (displayMainOptions()) {
@@ -60,14 +76,42 @@ int main() {
 			cout << "----------------------------------------------------------------------------------------------------------" << endl;
 			movieInt.displayMovieExtended(selectedMovie);
 			selectedTheatre = theatreInt.displayTheatres();
-			selectedDate = movieInt.displayDateByMovieANDTheatre(selectedMovie, selectedTheatre);
+			selectedAuditorium = auditoriumInt.displayAuditoriums(selectedMovie, selectedTheatre);
+			selectedDate = movieInt.displayDates(selectedMovie, selectedAuditorium, selectedTheatre);
+
+			if (!loggedIn) {
+				if (loginInt.displayLoginMenu(login, loginRep)) {
+					loggedIn = true;
+				}
+				else {
+					exitMenu = true;
+				}
+			}
+
+			if (loggedIn) {
+				auditoriumInt.displayAuditoriumSeats(selectedAuditorium);
+				auditoriumInt.displaySelectSeat(selectedAuditorium);
+				ticket = ticketInt.displayCalculateTicketPriceBasedOnOptions();
+				
+
+				//auditoriumInt.displayAuditoriumSeats(selectedAuditorium);
+
+			}
+
 			break;
 		case 2:
 			displayProgram();
 			break;
 		case 3:
-			if (loginInt.displayLoginMenu(login, loginRep)) 
-				loggedIn = true;
+			if (!loggedIn) {
+				if (loginInt.displayLoginMenu(login, loginRep)) {
+					loggedIn = true;
+				}
+				else {
+					exitMenu = true;
+				}
+			}
+			else cout << "You are already logged in. " << endl;
 			break;
 		case 4:
 			exitMenu = true;

@@ -52,7 +52,7 @@ public:
 	void displayMovie(Movie& movie);
 	void displayMovieExtended(Movie& movie);
 	Movie displayUniqueMovies();
-	Date displayDateByMovieANDTheatre(Movie& movie, Theatre& theatre);
+	Date displayDates(Movie& movie, Auditorium& auditorium, Theatre& theatre);
 };
 
 class MovieRepository {
@@ -62,7 +62,7 @@ public:
 	MovieRepository() {}
 	int getMovieID(Movie& movie, Auditorium& auditorium, Theatre& theatre);
 	int getNumberOfTotalUniqueMovies();
-	int getNumberOfDatesByMovieANDTheatre(Movie& movie, Theatre& theatre);
+	int getNumberOfDatesByMovieANDTheatre(Movie& movie, Auditorium& auditorium, Theatre& theatre);
 	void insertIntoDatabase(Movie& movie, Theatre& theatre, Auditorium& auditorium);
 	Movie loadMovie(int movieID);
 	template <typename T>

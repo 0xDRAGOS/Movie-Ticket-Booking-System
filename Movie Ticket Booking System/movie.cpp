@@ -101,18 +101,20 @@ Movie MovieInterface::displayUniqueMovies() {
 	return selectedMovie;
 }
 
-Date MovieInterface::displayDateByMovieANDTheatre(Movie& movie, Theatre& theatre) {
+Date MovieInterface::displayDates(Movie& movie, Auditorium& auditorium, Theatre& theatre) {
+	AuditoriumRepository auditoriumRep;
 	TheatreRepository theatreRep;
 	MovieRepository movieRep;
 	Date* dates = nullptr;
-	int number = movieRep.getNumberOfDatesByMovieANDTheatre(movie, theatre);
+	int number = movieRep.getNumberOfDatesByMovieANDTheatre(movie, auditorium, theatre);
 	int count = 0;
 	int option;
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
-		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT YEAR(movie_broadcast.broadcast_date) as broadcast_year, MONTH(movie_broadcast.broadcast_date) as broadcast_month, DAY(movie_broadcast.broadcast_date) as broadcast_day, HOUR(movie_broadcast.broadcast_date) as broadcast_hour, MINUTE(movie_broadcast.broadcast_date) as broadcast_minute from movie_broadcast JOIN movies ON movies.id = movie_broadcast.movie_id WHERE theatre_id = ? AND name = ?;");
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT YEAR(movie_broadcast.broadcast_date) as broadcast_year, MONTH(movie_broadcast.broadcast_date) as broadcast_month, DAY(movie_broadcast.broadcast_date) as broadcast_day, HOUR(movie_broadcast.broadcast_date) as broadcast_hour, MINUTE(movie_broadcast.broadcast_date) as broadcast_minute from movie_broadcast JOIN movies ON movies.id = movie_broadcast.movie_id WHERE theatre_id = ? AND auditorium_id = ? AND name = ? AND broadcast_date > CURRENT_TIMESTAMP;");
 		pstmt->setInt(1, theatreRep.getTheatreID(theatre));
-		pstmt->setString(2, movie.getName());
+		pstmt->setInt(2, auditoriumRep.getAuditoriumID(auditorium, theatre));
+		pstmt->setString(3, movie.getName());
 		sql::ResultSet* res = pstmt->executeQuery();
 		while (res->next()){
 			Date date(res->getInt("broadcast_year"), res->getInt("broadcast_month"), res->getInt("broadcast_day"), res->getInt("broadcast_hour"), res->getInt("broadcast_minute"));
@@ -190,14 +192,17 @@ int MovieRepository::getNumberOfTotalUniqueMovies() {
 	return number;
 }
 
-int MovieRepository::getNumberOfDatesByMovieANDTheatre(Movie& movie, Theatre& theatre) {
+int MovieRepository::getNumberOfDatesByMovieANDTheatre(Movie& movie, Auditorium& auditorium, Theatre& theatre) {
 	TheatreRepository theatreRep;
+	AuditoriumRepository auditoriumRep;
 	int number = 0;
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
-		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT count(broadcast_date) as total FROM movie_broadcast JOIN movies ON movies.id = movie_broadcast.movie_id WHERE theatre_id = ? and name = ?;");
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT count(broadcast_date) as total FROM movie_broadcast JOIN movies ON movies.id = movie_broadcast.movie_id WHERE theatre_id = ? AND auditorium_id = ? AND name = ? AND broadcast_date > CURRENT_TIMESTAMP;");
 		pstmt->setInt(1, theatreRep.getTheatreID(theatre));
-		pstmt->setString(2, movie.getName());
+		cout << "Asdas: " << auditoriumRep.getAuditoriumID(auditorium, theatre) << endl;
+		pstmt->setInt(2, auditoriumRep.getAuditoriumID(auditorium, theatre));
+		pstmt->setString(3, movie.getName());
 		sql::ResultSet* res = pstmt->executeQuery();
 		if (res->next()) {
 			number = res->getInt("total");

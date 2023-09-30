@@ -29,17 +29,23 @@ bool LoginRepository::validateLogin(Login& login) {
 
 bool LoginInterface::displayLoginMenu(Login& login, LoginRepository& loginRep) {
     string inputEmail, inputPassword;
+    int loginAttempts = 0;
     bool isValid = false;
     cout << "^----------[LOGIN]----------^" << endl;
-    while (!isValid) {
+    while (!isValid && loginAttempts < MAX_LOGIN_ATTEMPTS) {
         cout << "| Enter email: "; cin >> inputEmail;
         cout << "| Enter password: "; cin >> inputPassword;
 
         login = Login(inputEmail, inputPassword);
-        isValid = loginRep.validateLogin(login);
-        if (!isValid) cout << "Wrong email/password, retrying..." << endl;
+        if (isValid = loginRep.validateLogin(login)) {
+            cout << "Logged in successfully!" << endl;
+        }
+        else {
+            cout << "Wrong email/password, retrying..." << endl;
+            loginAttempts++;
+        }
     }
-    if (isValid) cout << "Logged in successfully!" << endl;
+    if (loginAttempts == MAX_LOGIN_ATTEMPTS) cout << "Maximum login attempts reached. Exiting... " << endl;
     cout << "_____________________________" << endl;
     return isValid;
 }

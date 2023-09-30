@@ -15,6 +15,12 @@ public:
 	void setPrice(double& newPrice);
 };
 
+class TicketInterface {
+public:
+	TicketInterface() {}
+	Ticket displayCalculateTicketPriceBasedOnOptions();
+};
+
 class TicketRepository {
 private:
 	DatabaseConnector dbConnector;
