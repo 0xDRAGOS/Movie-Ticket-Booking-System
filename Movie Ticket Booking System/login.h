@@ -10,6 +10,8 @@ using std::endl;
 using std::cout;
 using std::cin;
 
+enum UserType {Public, Private};
+
 class Login {
 private:
 	string inputEmail;
@@ -26,7 +28,7 @@ private:
 	DatabaseConnector dbConnector;
 public:
 	LoginRepository() {}
-	bool validateLogin(Login& login);
+	bool validateLogin(Login& login, UserType type);
 };
 
 class LoginInterface {

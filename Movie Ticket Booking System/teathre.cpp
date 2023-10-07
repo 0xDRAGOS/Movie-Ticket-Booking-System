@@ -75,6 +75,37 @@ Theatre TheatreInterface::displayTheatres() {
 	return selectedTheatre;
 }
 
+Theatre TheatreRepository::loadTheatre(const string& name) {
+	Theatre theatre;
+	sql::Connection* con = dbConnector.establishConnection();
+	try {
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT * FROM theatres WHERE name = ?;");
+		pstmt->setString(1, name);
+		sql::ResultSet* res = pstmt->executeQuery();
+		while (res->next()) {
+			string addressData = res->getString("address");
+			string country, county, city, street, number;
+			istringstream iss(addressData);
+			getline(iss, country, ',');
+			getline(iss, county, ',');
+			getline(iss, city, ',');
+			getline(iss, street, ',');
+			getline(iss, number, ',');
+			theatre.setName(res->getString("name"));
+			theatre.setAddress(Address(country, county, city, street, number));
+		}
+		cout << "Theatre loaded up successfully." << endl;
+		delete pstmt;
+		delete res;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not load theatre. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+	return theatre;
+}
+
 int TheatreRepository::getTheatreID(Theatre& theatre) {
 	sql::Connection* con = dbConnector.establishConnection();
 	int id;
@@ -165,6 +196,32 @@ void TheatreRepository::listMovies(Theatre& theatre) {
 	}
 	catch (sql::SQLException& e) {
 		cerr << "Could not list the movies. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+}
+
+void TheatreRepository::updateName(Theatre& theatre, const string& newName) {
+	sql::Connection* con = dbConnector.establishConnection();
+	try {
+		const string query = "UPDATE theatres SET name = ? WHERE name = ?";
+		sql::PreparedStatement* pstmt = con->prepareStatement(query);
+		pstmt->setString(1, newName);
+		pstmt->setString(2, theatre.getName());
+		int rowsUpdated = pstmt->executeUpdate();
+
+		if (rowsUpdated > 0) {
+			cout << "Theatre " << theatre.getName() << " modified with success." << endl;
+			con->commit();
+		}
+		else {
+			cout << "Theatre " << theatre.getName() << " not found." << endl;
+		}
+		delete pstmt;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not update user ( " << theatre.getName() << "). Error message : " << e.what() << endl;
+		con->rollback();
 		exit(1);
 	}
 	dbConnector.closeConnection(con);

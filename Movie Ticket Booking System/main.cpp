@@ -42,6 +42,7 @@ int main() {
 	PublicUser loadedPublicUser;
 
 	PrivateUser loadedPrivateUser;
+	PrivateUserInterface privateUserInt;
 
 	Auditorium auditorium;
 	Auditorium selectedAuditorium;
@@ -50,12 +51,13 @@ int main() {
 
 	Theatre theatre;
 	Theatre selectedTheatre;
+	TheatreRepository theatreRep;
 	TheatreInterface theatreInt;
 
 	Login login;
 	LoginRepository loginRep;
 	LoginInterface loginInt;
-	
+
 	Movie movie;
 	Movie selectedMovie;
 	MovieRepository movieRep;
@@ -65,7 +67,8 @@ int main() {
 	TicketRepository ticketRep;
 	TicketInterface ticketInt;
 
-	bool loggedIn = false;
+	bool loggedInPublicUser = false;
+	bool loggedInPrivateUser = false;
 	bool exitMenu = false;
 
 	int loginAttempts = 0;
@@ -81,7 +84,7 @@ int main() {
 			selectedDate = movieInt.displayDates(selectedMovie, selectedAuditorium, selectedTheatre);
 
 			int option;
-			if (!loggedIn) {
+			if (!loggedInPublicUser || !loggedInPrivateUser) {
 				cout << "Login in as an usual user / Login as an administrator (1/2)" << endl;
 				cout << "Enter option: ";  cin >> option;
 				while (option < 1 || option > 2) {
@@ -91,18 +94,22 @@ int main() {
 				switch (option) {
 				case 1:
 					loadedPublicUser = loginInt.displayLoginMenuPublicUser(login, loginRep);
-					if (loadedPublicUser.getLoggedInStatus())
-						loggedIn = true;
+					if (loadedPublicUser.getLoggedInStatus()) {
+						loggedInPublicUser = true;
+						loggedInPrivateUser = false;
+					}
 					break;
 				case 2:
 					loadedPrivateUser = loginInt.displayLoginMenuPrivateUser(login, loginRep);
-					if (loadedPrivateUser.getLoggedInStatus())
-						loggedIn = true;
+					if (loadedPrivateUser.getLoggedInStatus()) {
+						loggedInPublicUser = false;
+						loggedInPrivateUser = true;
+					}
 					break;
 				}
 			}
 
-			if (loggedIn) {
+			if (loggedInPublicUser || loggedInPrivateUser) {
 				auditoriumInt.displayAuditoriumSeats(selectedAuditorium);
 				auditoriumInt.displaySelectSeat(selectedAuditorium);
 				ticket = ticketInt.displayCalculateTicketPriceBasedOnOptions();
@@ -116,7 +123,7 @@ int main() {
 			break;
 		case 3:
 			int login_option;
-			if (!loggedIn) {
+			if (!loggedInPublicUser || !loggedInPrivateUser) {
 				cout << "Login in as an usual user / Login as an administrator (1/2)" << endl;
 				cout << "Enter option: ";  cin >> login_option;
 				while (login_option < 1 || login_option > 2) {
@@ -126,21 +133,62 @@ int main() {
 				switch (login_option) {
 				case 1:
 					loadedPublicUser = loginInt.displayLoginMenuPublicUser(login, loginRep);
-					if (loadedPublicUser.getLoggedInStatus())
-						loggedIn = true;
+					if (loadedPublicUser.getLoggedInStatus()) {
+						loggedInPublicUser = true;
+						loggedInPrivateUser = false;
+					}
 					break;
 				case 2:
 					loadedPrivateUser = loginInt.displayLoginMenuPrivateUser(login, loginRep);
-					if (loadedPrivateUser.getLoggedInStatus())
-						loggedIn = true;
+					if (loadedPrivateUser.getLoggedInStatus()) {
+						loggedInPublicUser = false;
+						loggedInPrivateUser = true;
+					}
 					break;
 				}
 			}
 			else cout << "You are already logged in. " << endl;
+
+			if (loggedInPrivateUser) {
+				bool exitPrivateUserMenu = false;
+				while (!exitPrivateUserMenu) {
+					switch (privateUserInt.displayMainMenu()) {
+					case 1:
+					{
+						string email, password;
+						cout << "Enter email: "; cin >> email;
+						cout << "Enter password: "; cin >> password;
+						PublicUser user = publicUserRep.loadPublicUser(email, password);
+						loadedPrivateUser.updateCredentials(user);
+					}
+					case 2:
+					{
+						string name;
+						cout << "Enter name: "; cin >> name;
+						Theatre theatre = theatreRep.loadTheatre(name);
+						loadedPrivateUser.updateTheatre(theatre);
+					}
+					case 3:
+					{
+						string name;
+						cout << "Enter name: "; cin >> name;
+						Movie movie = movieRep.loadMovieByName(name);
+						loadedPrivateUser.updateMovieDetails(movie);
+					}
+					case 4:
+					{
+						exitPrivateUserMenu = true;
+						cout << "Exited with success!" << endl;
+						break;
+					}
+					}
+				}
+			}
 			break;
 		case 4:
 			exitMenu = true;
 			cout << "Exited with success!" << endl;
+			break;
 		}
 	}
 }

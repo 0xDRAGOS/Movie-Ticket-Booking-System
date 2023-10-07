@@ -47,8 +47,10 @@ private:
 	DatabaseConnector dbConnector;
 public:
 	TheatreRepository() {}
+	Theatre loadTheatre(const string& name);
 	int getTheatreID(Theatre& theatre);
 	int getNumberOfTheatres();
 	void insertIntoDatabase(Theatre& theatre);
 	void listMovies(Theatre& theatre);
+	void updateName(Theatre& theatre, const string& newName);
 };

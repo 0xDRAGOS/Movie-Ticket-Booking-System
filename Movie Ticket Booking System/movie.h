@@ -65,6 +65,7 @@ public:
 	int getNumberOfDatesByMovieANDTheatre(Movie& movie, Auditorium& auditorium, Theatre& theatre);
 	void insertIntoDatabase(Movie& movie, Theatre& theatre, Auditorium& auditorium);
 	Movie loadMovie(int movieID);
+	Movie loadMovieByName(const string& name);
 	template <typename T>
 	void updateMovie(Movie& movie, const string& field, const T& value);
 };

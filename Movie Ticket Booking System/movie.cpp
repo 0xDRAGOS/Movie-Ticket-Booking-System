@@ -297,6 +297,42 @@ Movie MovieRepository::loadMovie(int movieID) {
 	return movie;
 }
 
+Movie MovieRepository::loadMovieByName(const string& name) {
+	sql::Connection* con = dbConnector.establishConnection();
+	Movie movie;
+	try {
+		sql::PreparedStatement* pstmt = con->prepareStatement("SELECT .*, YEAR(launch_date) AS launch_date_year, MONTH(launch_date) as launch_date_month, DAY(launch_date) as launch_date_day FROM movies WHERE name = ?);");
+		pstmt->setString(1, name);
+		sql::ResultSet* res = pstmt->executeQuery();
+		if (res->next()) {
+			movie.setName(res->getString("name"));
+			movie.setFormat(res->getString("format"));
+			movie.setRating(res->getString("rating"));
+			movie.setDirector(res->getString("director"));
+			movie.setActors(res->getString("actors"));
+			movie.setTrailerURL(res->getString("trailer_url"));
+			movie.setGenre(res->getString("genre"));
+			movie.setLanguage(res->getString("language"));
+			movie.setProducer(res->getString("producer"));
+			movie.setCountry(res->getString("country"));
+			movie.setLaunchDate(Date(res->getInt("launch_date_year"),
+				res->getInt("launch_date_month"),
+				res->getInt("launch_date_day"))
+			);
+		}
+		else {
+			cerr << "Movie not found." << endl;
+		}
+		delete pstmt;
+		delete res;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not load movie. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+	return movie;
+}
 
 template <typename T>
 void MovieRepository::updateMovie(Movie& movie, const string& field, const T& value) {

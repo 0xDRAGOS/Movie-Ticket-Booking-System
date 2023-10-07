@@ -6,11 +6,16 @@ Login::Login(const string& inputEmail, const string& inputPassword)
 const string Login::getInputEmail() { return inputEmail; };
 const string Login::getInputPassword() { return inputPassword; };
 
-bool LoginRepository::validateLogin(Login& login) {
+bool LoginRepository::validateLogin(Login& login, UserType type) {
     sql::Connection* con = dbConnector.establishConnection();
     bool isValid = false;
+    string query;
+
+    if (type == Public) query = "SELECT COUNT(*) FROM users WHERE email = ? AND password = ? AND user_type = 'public';";
+    else query = "SELECT COUNT(*) FROM users WHERE email = ? AND password = ? AND user_type = 'private';";
+
     try {
-        sql::PreparedStatement* pstmt = con->prepareStatement("SELECT COUNT(*) FROM users WHERE email = ? AND password = ?");
+        sql::PreparedStatement* pstmt = con->prepareStatement(query);
         pstmt->setString(1, login.getInputEmail());
         pstmt->setString(2, login.getInputPassword());
         sql::ResultSet* res = pstmt->executeQuery();
@@ -27,6 +32,8 @@ bool LoginRepository::validateLogin(Login& login) {
     return isValid;
 }
 
+
+
 PublicUser LoginInterface::displayLoginMenuPublicUser(Login& login, LoginRepository& loginRep) {
     string inputEmail, inputPassword;
     int loginAttempts = 0;
@@ -37,7 +44,7 @@ PublicUser LoginInterface::displayLoginMenuPublicUser(Login& login, LoginReposit
         cout << "| Enter password: "; cin >> inputPassword;
 
         login = Login(inputEmail, inputPassword);
-        if (isValid = loginRep.validateLogin(login)) {
+        if (isValid = loginRep.validateLogin(login, Public)) {
             cout << "Logged in successfully as an usual user!" << endl;
         }
         else {
@@ -65,7 +72,7 @@ PrivateUser LoginInterface::displayLoginMenuPrivateUser(Login& login, LoginRepos
         cout << "| Enter password: "; cin >> inputPassword;
 
         login = Login(inputEmail, inputPassword);
-        if (isValid = loginRep.validateLogin(login)) {
+        if (isValid = loginRep.validateLogin(login, Private)) {
             cout << "Logged in successfully as an administrator!" << endl;
         }
         else {
