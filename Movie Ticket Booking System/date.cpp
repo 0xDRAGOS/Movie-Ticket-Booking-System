@@ -49,7 +49,7 @@ void Date::displayDateHoursMinutes() {
         cout << minute;
 }
 
-string Date::to_string() const{
+string Date::toString() const{
     string date = std::to_string(year) + "-" + std::to_string(month) + "-" + std::to_string(day) + " " + std::to_string(hour) + ":" + std::to_string(minute);
     return date;
 }

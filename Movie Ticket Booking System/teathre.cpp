@@ -151,12 +151,29 @@ return number;
 void TheatreRepository::insertIntoDatabase(Theatre& theatre) {
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
+		sql::PreparedStatement* pstmt = con->prepareStatement("DELETE FROM theatres WHERE name = ? AND address = ?;");
+		pstmt->setString(1, theatre.getName());
+		pstmt->setString(2, theatre.getAddress().toString());
+		pstmt->executeUpdate();
+		delete pstmt;
+		cout << "Theatre deleted successfully from database." << endl;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not delete the theatre from database. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+}
+
+void TheatreRepository::deleteFromDatabase(Theatre& theatre) {
+	sql::Connection* con = dbConnector.establishConnection();
+	try {
 		sql::PreparedStatement* pstmt = con->prepareStatement("INSERT INTO theatres (name, address) VALUES (?, ?);");
 		pstmt->setString(1, theatre.getName());
 		pstmt->setString(2, theatre.getAddress().toString());
 		pstmt->executeUpdate();
 		delete pstmt;
-		cout << "Theatre added successfuly into database." << endl;
+		cout << "Theatre added successfully into database." << endl;
 	}
 	catch (sql::SQLException& e) {
 		cerr << "Could not insert the theatre into database. Error: " << e.what() << endl;

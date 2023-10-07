@@ -1,7 +1,10 @@
 #pragma once
-
+#include <iostream>
 #include <string>
 using std::string;
+using std::istream;
+using std::cin;
+using std::cout;
 
 class Address {
 	string country;
@@ -19,4 +22,5 @@ public:
 	const string getNumber();
 	string toString() const;
 	Address& operator=(const Address& adr);
+	friend istream& operator>>(istream& is, Address& a);
 };

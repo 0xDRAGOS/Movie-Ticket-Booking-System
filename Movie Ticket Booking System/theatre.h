@@ -51,6 +51,7 @@ public:
 	int getTheatreID(Theatre& theatre);
 	int getNumberOfTheatres();
 	void insertIntoDatabase(Theatre& theatre);
+	void deleteFromDatabase(Theatre& theatre);
 	void listMovies(Theatre& theatre);
 	void updateName(Theatre& theatre, const string& newName);
 };

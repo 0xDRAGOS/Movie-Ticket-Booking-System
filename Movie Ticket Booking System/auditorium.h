@@ -71,6 +71,7 @@ public:
 	void displayAuditorium(Auditorium& auditorium);
 	Auditorium displayAuditoriums(Movie& movie, Theatre& theatre);
 	void displaySelectSeat(Auditorium& auditorium);
+	Auditorium readAuditorium();
 };
 
 class AuditoriumRepository {
@@ -82,4 +83,5 @@ public:
 	int getNumberOfAuditoriumsByTheatre(Theatre& theatre);
 	void updateAuditorium(Auditorium& auditorium, Theatre& theatre, const string& field, const int& value);
 	void insertIntoDatabase(Auditorium& auditorium, Theatre& theatre);
+	void deleteFromDatabase(Auditorium& auditorium, Theatre& theatre);
 };

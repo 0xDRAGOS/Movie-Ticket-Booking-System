@@ -140,6 +140,18 @@ Auditorium AuditoriumInterface::displayAuditoriums(Movie& movie, Theatre& theatr
 	}
 }
 
+Auditorium AuditoriumInterface::readAuditorium() {
+	Auditorium auditorium;
+	int auditorium_number, seats_number;
+
+	cout << "Enter auditorium number: "; cin >> auditorium_number;
+	auditorium.setAuditoriumNumber(auditorium_number);
+	cout << "Enter seats number: "; cin >> seats_number;
+	auditorium.setSeatsNumber(seats_number);
+
+	return auditorium;
+}
+
 int AuditoriumRepository::getAuditoriumID(Auditorium& auditorium, Theatre& theatre) {
 	sql::Connection* con = dbConnector.establishConnection();
 	int id;
@@ -238,6 +250,26 @@ void AuditoriumRepository::insertIntoDatabase(Auditorium& auditorium, Theatre& t
 	}
 	catch (sql::SQLException& e) {
 		cerr << "Could not insert the auditorium into database. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+}
+
+void AuditoriumRepository::deleteFromDatabase(Auditorium& auditorium, Theatre& theatre) {
+	sql::Connection* con = dbConnector.establishConnection();
+	try {
+		TheatreRepository theatreRep;
+		int theatre_id = theatreRep.getTheatreID(theatre);
+		sql::PreparedStatement* pstmt = con->prepareStatement("DELETE FROM auditoriums WHERE theatre_id = ? AND auditorium_number = ? AND seats_number = ?;");
+		pstmt->setInt(1, theatre_id);
+		pstmt->setInt(2, auditorium.getAuditoriumNumber());
+		pstmt->setInt(3, auditorium.getSeatNumber());
+		pstmt->executeUpdate();
+		delete pstmt;
+		cout << "Auditorium deleted successfully from database." << endl;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not delete the auditorium from database. Error: " << e.what() << endl;
 		exit(1);
 	}
 	dbConnector.closeConnection(con);

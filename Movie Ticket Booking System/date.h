@@ -27,7 +27,7 @@ public:
     void readDate();
     void displayDate();
     void displayDateHoursMinutes();
-    string to_string() const;
+    string toString() const;
     Date& operator= (const Date& d);
     friend ostream& operator<<(ostream& os, const Date& d);
     friend istream& operator>>(istream& is, Date& d);

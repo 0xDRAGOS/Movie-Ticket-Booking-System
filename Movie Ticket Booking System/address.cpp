@@ -23,3 +23,12 @@ Address& Address::operator=(const Address& adr) {
 	}
 	return *this;
 }
+
+istream& operator>>(istream& is, Address& a) {
+    cout << "Country: "; cin >> a.country;
+	cout << "County: "; cin >> a.county;
+    cout << "City: "; cin >> a.city;
+    cout << "Street: "; cin >> a.street;
+    cout << "Number: "; cin >> a.number;
+    return is;
+}

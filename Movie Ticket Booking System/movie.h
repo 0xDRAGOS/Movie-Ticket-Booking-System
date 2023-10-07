@@ -2,6 +2,9 @@
 #include "auditorium.h"
 #include "theatre.h"
 #include "date.h"
+using std::cout;
+using std::cin;
+using std::getline;
 
 class Auditorium;
 class Theatre;
@@ -53,6 +56,7 @@ public:
 	void displayMovieExtended(Movie& movie);
 	Movie displayUniqueMovies();
 	Date displayDates(Movie& movie, Auditorium& auditorium, Theatre& theatre);
+	Movie readMovie();
 };
 
 class MovieRepository {
@@ -64,6 +68,7 @@ public:
 	int getNumberOfTotalUniqueMovies();
 	int getNumberOfDatesByMovieANDTheatre(Movie& movie, Auditorium& auditorium, Theatre& theatre);
 	void insertIntoDatabase(Movie& movie, Theatre& theatre, Auditorium& auditorium);
+	void deleteFromDatabase(Movie& movie, Theatre& theatre, Auditorium& auditorium);
 	Movie loadMovie(int movieID);
 	Movie loadMovieByName(const string& name);
 	template <typename T>

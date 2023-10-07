@@ -33,8 +33,6 @@ void PrivateUser::updateTheatre(Theatre& theatre) {
 	}
 }
 
-
-
 void PrivateUser::updateMovieDetails(Movie& movie) {
 	MovieRepository movieRep;
 
@@ -70,19 +68,65 @@ void PrivateUser::updateMovieDetails(Movie& movie) {
 	}
 }
 
+void PrivateUser::updateAuditorium(Auditorium& auditorium, Theatre& theatre) {
+	AuditoriumRepository auditoriumRep;
+
+	try {
+		int auditorium_number, seats_number;
+		cout << "Enter new auditorium number: "; cin >> auditorium_number;
+		cout << "Enter new seats_number: "; cin >> seats_number;
+		auditoriumRep.updateAuditorium(auditorium, theatre, "auditorium_number", auditorium_number);
+		auditoriumRep.updateAuditorium(auditorium, theatre, "seats_number", seats_number);
+		cout << "Auditorium updated successfully!" << endl;
+	}
+	catch (const std::exception& e) {
+		cerr << "An unexpected error occurred: " << e.what() << endl;
+	}
+}
+
+void PrivateUser::addTheatre(Theatre& theatre) {
+	TheatreRepository theatreRep;
+	theatreRep.insertIntoDatabase(theatre);
+}
+
+void PrivateUser::addAuditorium(Auditorium& auditorium, Theatre& theatre) {
+	AuditoriumRepository auditoriumRep;
+	auditoriumRep.insertIntoDatabase(auditorium, theatre);
+}
+
+void PrivateUser::addMovie(Movie& movie, Auditorium& auditorium, Theatre& theatre) {
+	MovieRepository movieRep;
+	movieRep.insertIntoDatabase(movie, theatre, auditorium);
+}
+
+void PrivateUser::deleteTheatre(Theatre& theatre) {
+	TheatreRepository theatreRep;
+	theatreRep.deleteFromDatabase(theatre);
+}
+
+void PrivateUser::deleteAuditorium(Auditorium& auditorium, Theatre& theatre) {
+	AuditoriumRepository auditoriumRep;
+	auditoriumRep.deleteFromDatabase(auditorium, theatre);
+}
+
+void PrivateUser::deleteMovie(Movie& movie, Auditorium& auditorium, Theatre& theatre) {
+	MovieRepository movieRep;
+	movieRep.deleteFromDatabase(movie, theatre, auditorium);
+}
 
 int PrivateUserInterface::displayMainMenu() {
 	int option;
 
-	cout << "---------------------------------------------------" << endl;
-	cout << "| 1 - Change user email and password              |" << endl;
-	cout << "| 2 - Modify theatre details                      |" << endl;
-	cout << "| 3 - Modify movie details                        |" << endl;
-	cout << "| 4 - Exit                                        |" << endl;
-	cout << "---------------------------------------------------" << endl;
+	cout << "-----------------------------------------------------------------------------------" << endl;
+	cout << "| 1 - Change user email and password                                              |" << endl;
+	cout << "| 2 - Modify theatre details      | 3 - Add theatre      | 4 - Delete theatre     |" << endl;
+	cout << "| 5 - Modify auditorium details   | 6 - Add auditorium   | 7 - Delete auditorium  |" << endl;
+	cout << "| 8 - Modify movie details        | 9 - Add movie        | 10 - Delete movie      |" << endl;
+	cout << "| 11 - Exit                                                                       |" << endl;
+	cout << "-----------------------------------------------------------------------------------" << endl;
 
 	cout << "Enter option: "; cin >> option;
-	while (option < 1 || option > 4) {
+	while (option < 1 || option > 11) {
 		cout << "Invalid option, retrying..." << endl;
 		cout << "Enter option: "; cin >> option;
 	}

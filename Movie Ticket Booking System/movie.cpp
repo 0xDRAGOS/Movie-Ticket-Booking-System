@@ -144,6 +144,38 @@ Date MovieInterface::displayDates(Movie& movie, Auditorium& auditorium, Theatre&
 	return selectedDate;
 }
 
+Movie MovieInterface::readMovie() {
+	Movie movie;
+	string name, format, rating, director, actors, trailer_url, genre, language, producer, country;
+	Date launch_date;
+
+	cout << "Enter Movie Details:" << endl;
+	cout << "Name: "; getline(cin, name);
+	movie.setName(name);
+	cout << "Format: "; getline(cin, format);
+	movie.setFormat(format);
+	cout << "Rating: "; getline(cin, rating);
+	movie.setRating(rating);
+	cout << "Director: "; getline(cin, director);
+	movie.setDirector(director);
+	cout << "Actors: "; getline(cin, actors);
+	movie.setActors(actors);
+	cout << "Trailer URL: "; getline(cin, trailer_url);
+	movie.setTrailerURL(trailer_url);
+	cout << "Genre: "; getline(cin, genre);
+	movie.setGenre(genre);
+	cout << "Language: "; getline(cin, language);
+	movie.setLanguage(language);
+	cout << "Producer: "; getline(cin, producer);
+	movie.setProducer(producer);
+	cout << "Country: "; getline(cin, country);
+	movie.setCountry(country);
+	cin >> launch_date;
+	movie.setLaunchDate(launch_date);
+
+	return movie;
+}
+
 int MovieRepository::getMovieID(Movie& movie, Auditorium& auditorium, Theatre& theatre) {
 	sql::Connection* con = dbConnector.establishConnection();
 	int id;
@@ -260,6 +292,28 @@ void MovieRepository::insertIntoDatabase(Movie& movie, Theatre& theatre, Auditor
 	dbConnector.closeConnection(con);
 }
 
+void MovieRepository::deleteFromDatabase(Movie& movie, Theatre& theatre, Auditorium& auditorium) {
+	sql::Connection* con = dbConnector.establishConnection();
+	try {
+		TheatreRepository theatreRep;
+		int theatre_id = theatreRep.getTheatreID(theatre);
+		AuditoriumRepository auditoriumRep;
+		int auditorium_id = auditoriumRep.getAuditoriumID(auditorium, theatre);
+		sql::PreparedStatement* pstmt = con->prepareStatement("DELETE FROM movies WHERE theatre_id = ? AND auditorium_id = ? AND name = ?;");
+		pstmt->setInt(1, theatre_id);
+		pstmt->setInt(2, auditorium_id);
+		pstmt->setString(3, movie.getName());
+		pstmt->executeUpdate();
+		delete pstmt;
+		cout << "Movie deleted successfuly from database." << endl;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not delete the movie from database. Error: " << e.what() << endl;
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+}
+
 Movie MovieRepository::loadMovie(int movieID) {
 	sql::Connection* con = dbConnector.establishConnection();
 	Movie movie;
@@ -340,7 +394,7 @@ void MovieRepository::updateMovie(Movie& movie, const string& field, const Date&
 	try {
 		const string query = "UPDATE movies SET " + field + " = ? WHERE name = ?";
 		sql::PreparedStatement* pstmt = con->prepareStatement(query);
-		pstmt->setString(1, value.to_string());
+		pstmt->setString(1, value.toString());
 		pstmt->setString(2, movie.getName());
 		int rowsUpdated = pstmt->executeUpdate();
 

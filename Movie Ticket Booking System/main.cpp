@@ -8,6 +8,19 @@
 
 const string CINEMA_NAME = "Vision Cinema";
 
+bool loggedInPublicUser = false;
+bool loggedInPrivateUser = false;
+
+Login login;
+LoginRepository loginRep;
+LoginInterface loginInt;
+
+PublicUserRepository publicUserRep;
+PublicUser loadedPublicUser;
+
+PrivateUser loadedPrivateUser;
+PrivateUserInterface privateUserInt;
+
 int displayMainOptions() {
 	int option;
 	cout << CINEMA_NAME << " | 1 - Movies | 2 - Tariffs | 3 - Login | 4 - Exit |" << endl;
@@ -35,14 +48,37 @@ void displayTariffs() {
 	cout << "----------------------------------------------------------------------------------------------------------" << endl;
 }
 
+void loginMenu() {
+	int login_option;
+	if (!loggedInPublicUser || !loggedInPrivateUser) {
+		cout << "Login in as an usual user / Login as an administrator (1/2)" << endl;
+		cout << "Enter option: ";  cin >> login_option;
+		while (login_option < 1 || login_option > 2) {
+			cout << "Invalid option, retrying..." << endl;
+			cout << "Enter option: ";  cin >> login_option;
+		}
+		switch (login_option) {
+		case 1:
+			loadedPublicUser = loginInt.displayLoginMenuPublicUser(login, loginRep);
+			if (loadedPublicUser.getLoggedInStatus()) {
+				loggedInPublicUser = true;
+				loggedInPrivateUser = false;
+			}
+			break;
+		case 2:
+			loadedPrivateUser = loginInt.displayLoginMenuPrivateUser(login, loginRep);
+			if (loadedPrivateUser.getLoggedInStatus()) {
+				loggedInPublicUser = false;
+				loggedInPrivateUser = true;
+			}
+			break;
+		}
+	}
+	else cout << "You are already logged in. " << endl;
+}
+
 int main() {
 	Date selectedDate;
-
-	PublicUserRepository publicUserRep;
-	PublicUser loadedPublicUser;
-
-	PrivateUser loadedPrivateUser;
-	PrivateUserInterface privateUserInt;
 
 	Auditorium auditorium;
 	Auditorium selectedAuditorium;
@@ -54,10 +90,6 @@ int main() {
 	TheatreRepository theatreRep;
 	TheatreInterface theatreInt;
 
-	Login login;
-	LoginRepository loginRep;
-	LoginInterface loginInt;
-
 	Movie movie;
 	Movie selectedMovie;
 	MovieRepository movieRep;
@@ -67,11 +99,7 @@ int main() {
 	TicketRepository ticketRep;
 	TicketInterface ticketInt;
 
-	bool loggedInPublicUser = false;
-	bool loggedInPrivateUser = false;
 	bool exitMenu = false;
-
-	int loginAttempts = 0;
 
 	while (!exitMenu) {
 		switch (displayMainOptions()) {
@@ -83,31 +111,7 @@ int main() {
 			selectedAuditorium = auditoriumInt.displayAuditoriums(selectedMovie, selectedTheatre);
 			selectedDate = movieInt.displayDates(selectedMovie, selectedAuditorium, selectedTheatre);
 
-			int option;
-			if (!loggedInPublicUser || !loggedInPrivateUser) {
-				cout << "Login in as an usual user / Login as an administrator (1/2)" << endl;
-				cout << "Enter option: ";  cin >> option;
-				while (option < 1 || option > 2) {
-					cout << "Invalid option, retrying..." << endl;
-					cout << "Enter option: ";  cin >> option;
-				}
-				switch (option) {
-				case 1:
-					loadedPublicUser = loginInt.displayLoginMenuPublicUser(login, loginRep);
-					if (loadedPublicUser.getLoggedInStatus()) {
-						loggedInPublicUser = true;
-						loggedInPrivateUser = false;
-					}
-					break;
-				case 2:
-					loadedPrivateUser = loginInt.displayLoginMenuPrivateUser(login, loginRep);
-					if (loadedPrivateUser.getLoggedInStatus()) {
-						loggedInPublicUser = false;
-						loggedInPrivateUser = true;
-					}
-					break;
-				}
-			}
+			loginMenu();
 
 			if (loggedInPublicUser || loggedInPrivateUser) {
 				auditoriumInt.displayAuditoriumSeats(selectedAuditorium);
@@ -122,32 +126,7 @@ int main() {
 			displayTariffs();
 			break;
 		case 3:
-			int login_option;
-			if (!loggedInPublicUser || !loggedInPrivateUser) {
-				cout << "Login in as an usual user / Login as an administrator (1/2)" << endl;
-				cout << "Enter option: ";  cin >> login_option;
-				while (login_option < 1 || login_option > 2) {
-					cout << "Invalid option, retrying..." << endl;
-					cout << "Enter option: ";  cin >> login_option;
-				}
-				switch (login_option) {
-				case 1:
-					loadedPublicUser = loginInt.displayLoginMenuPublicUser(login, loginRep);
-					if (loadedPublicUser.getLoggedInStatus()) {
-						loggedInPublicUser = true;
-						loggedInPrivateUser = false;
-					}
-					break;
-				case 2:
-					loadedPrivateUser = loginInt.displayLoginMenuPrivateUser(login, loginRep);
-					if (loadedPrivateUser.getLoggedInStatus()) {
-						loggedInPublicUser = false;
-						loggedInPrivateUser = true;
-					}
-					break;
-				}
-			}
-			else cout << "You are already logged in. " << endl;
+			loginMenu();
 
 			if (loggedInPrivateUser) {
 				bool exitPrivateUserMenu = false;
@@ -164,18 +143,77 @@ int main() {
 					case 2:
 					{
 						string name;
-						cout << "Enter name: "; cin >> name;
+						cout << "Enter name: "; getline(cin, name);
 						Theatre theatre = theatreRep.loadTheatre(name);
 						loadedPrivateUser.updateTheatre(theatre);
 					}
 					case 3:
 					{
 						string name;
-						cout << "Enter name: "; cin >> name;
-						Movie movie = movieRep.loadMovieByName(name);
-						loadedPrivateUser.updateMovieDetails(movie);
+						Address address;
+						cout << "Enter name: "; getline(cin, name);
+						cout << "Enter address: "; cin >> address;
+						theatre.setName(name);
+						theatre.setAddress(address);
+						loadedPrivateUser.addTheatre(theatre);
 					}
 					case 4:
+					{
+						string name;
+						cout << "Enter name: "; getline(cin, name);
+						theatre = theatreRep.loadTheatre(name);
+						loadedPrivateUser.deleteTheatre(theatre);
+					}
+					case 5:
+					{
+						string name;
+						cout << "Enter theatre name: "; getline(cin, name);
+						theatre = theatreRep.loadTheatre(name);
+						auditorium = auditoriumInt.readAuditorium();
+						loadedPrivateUser.updateAuditorium(auditorium, theatre);
+					}
+					case 6:
+					{
+						string name;
+						cout << "Enter theatre name: "; getline(cin, name);
+						theatre = theatreRep.loadTheatre(name);
+						auditorium = auditoriumInt.readAuditorium();
+						loadedPrivateUser.addAuditorium(auditorium, theatre);
+					}
+					case 7:
+					{
+						string name;
+						cout << "Enter theatre name: "; getline(cin, name);
+						theatre = theatreRep.loadTheatre(name);
+						auditorium = auditoriumInt.readAuditorium();
+						loadedPrivateUser.deleteAuditorium(auditorium, theatre);
+					}
+					case 8:
+					{
+						string name;
+						cout << "Enter name: "; getline(cin, name);
+						movie = movieRep.loadMovieByName(name);
+						loadedPrivateUser.updateMovieDetails(movie);
+					}
+					case 9:
+					{
+						string name;
+						cout << "Enter theatre name: "; getline(cin, name);
+						theatre = theatreRep.loadTheatre(name);
+						auditorium = auditoriumInt.readAuditorium();
+						movie = movieInt.readMovie();
+						loadedPrivateUser.addMovie(movie, auditorium, theatre);
+					}
+					case 10:
+					{
+						string name;
+						cout << "Enter theatre name: "; getline(cin, name);
+						theatre = theatreRep.loadTheatre(name);
+						auditorium = auditoriumInt.readAuditorium();
+						movie = movieInt.readMovie();
+						loadedPrivateUser.deleteMovie(movie, auditorium, theatre);
+					}
+					case 11:
 					{
 						exitPrivateUserMenu = true;
 						cout << "Exited with success!" << endl;
