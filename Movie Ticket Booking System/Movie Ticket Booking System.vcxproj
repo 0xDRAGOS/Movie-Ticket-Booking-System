@@ -149,6 +149,7 @@
     <ClInclude Include="address.h" />
     <ClInclude Include="auditorium.h" />
     <ClInclude Include="login.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="movie.h" />
     <ClInclude Include="private_user.h" />
     <ClInclude Include="public_user.h" />
