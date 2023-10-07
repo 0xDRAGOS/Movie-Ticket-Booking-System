@@ -1,0 +1,184 @@
+CREATE TABLE users(
+	id SERIAL PRIMARY KEY,
+	user_type VARCHAR(7) NOT NULL CHECK (user_type IN ('private', 'public')),
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	email VARCHAR(50) NOT NULL,
+	password VARCHAR(50) NOT NULL,
+	lastName VARCHAR(100) NOT NULL,
+	firstName VARCHAR(100) NOT NULL,
+	address VARCHAR(100)
+);
+
+INSERT INTO users(user_type, email, password, lastName, firstName, address)
+VALUES ('public', 'email@example.com', '1234', 'Simion', 'Dragos-Ionut', 'Valcea');
+
+CREATE TABLE theatres (
+	id SERIAL PRIMARY KEY,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	name VARCHAR(255) NOT NULL,
+	address VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE auditoriums (
+        id SERIAL PRIMARY KEY,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	theatre_id INTEGER REFERENCES theatres(id),
+	auditorium_number INTEGER NOT NULL,
+	seats_number INTEGER NOT NULL
+);
+
+CREATE TABLE movies (
+	id SERIAL PRIMARY KEY,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        theatre_id INTEGER REFERENCES theatres(id),
+        auditorium_id INTEGER REFERENCES auditoriums(id),
+        name VARCHAR(255) NOT NULL,
+        format VARCHAR(255),
+        rating VARCHAR(255),
+        director VARCHAR(255),
+        actors TEXT,
+        trailer_url VARCHAR(255),
+        genre VARCHAR(255),
+        language VARCHAR(255),
+        producer VARCHAR(255),
+        country VARCHAR(255),
+        launch_date TIMESTAMP
+);
+
+CREATE TABLE tickets (
+	id SERIAL PRIMARY KEY,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	user_id INTEGER REFERENCES users(id),
+	movie_id INTEGER REFERENCES movies(id),
+	price DOUBLE NOT NULL
+);
+
+CREATE TABLE movie_broadcast (
+	id SERIAL PRIMARY KEY,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	movie_id INTEGER REFERENCES movies(id),
+	broadcast_date TIMESTAMP
+);
+
+ALTER TABLE users
+ADD CONSTRAINT unique_email UNIQUE(email);
+
+INSERT INTO theatres (name, address) VALUES ('CRAIOVA MERCUR', 'Romania, Dolj, Craiova, Calea Unirii, NR 14'), ('CRAIOVA VIP ELECTROPUTERE', 'Romania, Dolj, Craiova, Calea Bucuresti, NR 80'), ('PROMENADA CRAIOVA', 'Romania, Dolj, Craiova, Calea Severinului Str Raului, NR 20');
+
+INSERT INTO auditoriums (theatre_id, auditorium_number, seats_number) 
+VALUES 
+(1, 1, 25), 
+(1, 2, 25), 
+(1, 3, 25), 
+(1, 4, 25), 
+(1, 5, 25), 
+(2, 1, 25), 
+(2, 2, 25), 
+(2, 3, 25), 
+(2, 4, 25), 
+(2, 5, 25), 
+(3, 1, 25), 
+(3, 2, 25), 
+(3, 3, 25), 
+(3, 4, 25), 
+(3, 5, 25), 
+(3, 6, 25), 
+(3, 7, 25);
+
+INSERT INTO movies (theatre_id, auditorium_id, name, format, rating, director, actors, trailer_url, genre, language, producer, country, launch_date) 
+VALUES
+(1, 1, 'EXPEND4BLES', '2D', 'N 15', 'Scott Waugh', 'Jason Statham, 50 Cent, Megan Fox, Dolph Lundgren, Tony Jaa, Sylvester Stallone', 'https://www.youtube.com/watch?v=lyJA0GgYS8E&t=1s', 'Action, Adventure, Thriller', 'English', 'Campbell Grobman Films', 'SUA', '2023-09-22'),
+(1, 2, 'EXPEND4BLES', '2D', 'N 15', 'Scott Waugh', 'Jason Statham, 50 Cent, Megan Fox, Dolph Lundgren, Tony Jaa, Sylvester Stallone', 'https://www.youtube.com/watch?v=lyJA0GgYS8E&t=1s', 'Action, Adventure, Thriller', 'English', 'Campbell Grobman Films', 'SUA', '2023-09-22'),
+(1, 3, 'EXPEND4BLES', '2D', 'N 15', 'Scott Waugh', 'Jason Statham, 50 Cent, Megan Fox, Dolph Lundgren, Tony Jaa, Sylvester Stallone', 'https://www.youtube.com/watch?v=lyJA0GgYS8E&t=1s', 'Action, Adventure, Thriller', 'English', 'Campbell Grobman Films', 'SUA', '2023-09-22'),
+(1, 4, 'EXPEND4BLES', '2D', 'N 15', 'Scott Waugh', 'Jason Statham, 50 Cent, Megan Fox, Dolph Lundgren, Tony Jaa, Sylvester Stallone', 'https://www.youtube.com/watch?v=lyJA0GgYS8E&t=1s', 'Action, Adventure, Thriller', 'English', 'Campbell Grobman Films', 'SUA', '2023-09-22'),
+(1, 5, 'EXPEND4BLES', '2D', 'N 15', 'Scott Waugh', 'Jason Statham, 50 Cent, Megan Fox, Dolph Lundgren, Tony Jaa, Sylvester Stallone', 'https://www.youtube.com/watch?v=lyJA0GgYS8E&t=1s', 'Action, Adventure, Thriller', 'English', 'Campbell Grobman Films', 'SUA', '2023-09-22'),
+(1, 1, 'Movie2', '2D', 'PG-13', 'Director2', 'Actor1, Actor2', 'https://www.youtube.com/trailer2', 'Genre2', 'English', 'Producer2', 'Country2', '2023-09-23'),
+(1, 2, 'Movie2', '2D', 'PG-13', 'Director2', 'Actor1, Actor2', 'https://www.youtube.com/trailer2', 'Genre2', 'English', 'Producer2', 'Country2', '2023-09-23'),
+(1, 3, 'Movie2', '2D', 'PG-13', 'Director2', 'Actor1, Actor2', 'https://www.youtube.com/trailer2', 'Genre2', 'English', 'Producer2', 'Country2', '2023-09-23'),
+(1, 4, 'Movie2', '2D', 'PG-13', 'Director2', 'Actor1, Actor2', 'https://www.youtube.com/trailer2', 'Genre2', 'English', 'Producer2', 'Country2', '2023-09-23'),
+(1, 5, 'Movie2', '2D', 'PG-13', 'Director2', 'Actor1, Actor2', 'https://www.youtube.com/trailer2', 'Genre2', 'English', 'Producer2', 'Country2', '2023-09-23'),
+(1, 1, 'Movie3', '3D', 'R', 'Director3', 'Actor3, Actor4', 'https://www.youtube.com/trailer3', 'Genre3', 'English', 'Producer3', 'Country3', '2023-09-24'),
+(1, 2, 'Movie3', '3D', 'R', 'Director3', 'Actor3, Actor4', 'https://www.youtube.com/trailer3', 'Genre3', 'English', 'Producer3', 'Country3', '2023-09-24'),
+(1, 3, 'Movie3', '3D', 'R', 'Director3', 'Actor3, Actor4', 'https://www.youtube.com/trailer3', 'Genre3', 'English', 'Producer3', 'Country3', '2023-09-24'),
+(1, 4, 'Movie3', '3D', 'R', 'Director3', 'Actor3, Actor4', 'https://www.youtube.com/trailer3', 'Genre3', 'English', 'Producer3', 'Country3', '2023-09-24'),
+(1, 5, 'Movie3', '3D', 'R', 'Director3', 'Actor3, Actor4', 'https://www.youtube.com/trailer3', 'Genre3', 'English', 'Producer3', 'Country3', '2023-09-24'),
+(1, 1, 'Movie4', '2D', 'PG', 'Director4', 'Actor5, Actor6', 'https://www.youtube.com/trailer4', 'Genre4', 'English', 'Producer4', 'Country4', '2023-09-25'),
+(1, 2, 'Movie4', '2D', 'PG', 'Director4', 'Actor5, Actor6', 'https://www.youtube.com/trailer4', 'Genre4', 'English', 'Producer4', 'Country4', '2023-09-25'),
+(1, 3, 'Movie4', '2D', 'PG', 'Director4', 'Actor5, Actor6', 'https://www.youtube.com/trailer4', 'Genre4', 'English', 'Producer4', 'Country4', '2023-09-25'),
+(1, 4, 'Movie4', '2D', 'PG', 'Director4', 'Actor5, Actor6', 'https://www.youtube.com/trailer4', 'Genre4', 'English', 'Producer4', 'Country4', '2023-09-25'),
+(1, 5, 'Movie4', '2D', 'PG', 'Director4', 'Actor5, Actor6', 'https://www.youtube.com/trailer4', 'Genre4', 'English', 'Producer4', 'Country4', '2023-09-25'),
+(1, 1, 'Movie5', '2D', 'PG-13', 'Director5', 'Actor7, Actor8', 'https://www.youtube.com/trailer5', 'Genre5', 'English', 'Producer5', 'Country5', '2023-09-26'),
+(1, 2, 'Movie5', '2D', 'PG-13', 'Director5', 'Actor7, Actor8', 'https://www.youtube.com/trailer5', 'Genre5', 'English', 'Producer5', 'Country5', '2023-09-26'),
+(1, 3, 'Movie5', '2D', 'PG-13', 'Director5', 'Actor7, Actor8', 'https://www.youtube.com/trailer5', 'Genre5', 'English', 'Producer5', 'Country5', '2023-09-26'),
+(1, 4, 'Movie5', '2D', 'PG-13', 'Director5', 'Actor7, Actor8', 'https://www.youtube.com/trailer5', 'Genre5', 'English', 'Producer5', 'Country5', '2023-09-26'),
+(1, 5, 'Movie5', '2D', 'PG-13', 'Director5', 'Actor7, Actor8', 'https://www.youtube.com/trailer5', 'Genre5', 'English', 'Producer5', 'Country5', '2023-09-26'),
+(1, 1, 'Movie6', '3D', 'R', 'Director6', 'Actor9, Actor10', 'https://www.youtube.com/trailer6', 'Genre6', 'English', 'Producer6', 'Country6', '2023-09-27'),
+(1, 2, 'Movie6', '3D', 'R', 'Director6', 'Actor9, Actor10', 'https://www.youtube.com/trailer6', 'Genre6', 'English', 'Producer6', 'Country6', '2023-09-27'),
+(1, 3, 'Movie6', '3D', 'R', 'Director6', 'Actor9, Actor10', 'https://www.youtube.com/trailer6', 'Genre6', 'English', 'Producer6', 'Country6', '2023-09-27'),
+(1, 4, 'Movie6', '3D', 'R', 'Director6', 'Actor9, Actor10', 'https://www.youtube.com/trailer6', 'Genre6', 'English', 'Producer6', 'Country6', '2023-09-27'),
+(1, 5, 'Movie6', '3D', 'R', 'Director6', 'Actor9, Actor10', 'https://www.youtube.com/trailer6', 'Genre6', 'English', 'Producer6', 'Country6', '2023-09-27');
+
+INSERT INTO movie_broadcast (movie_id, broadcast_date) VALUES 
+ (1, '2023-09-29 10:00:00'),
+ (6, '2023-09-29 12:00:00'),
+ (11, '2023-09-29 14:30:00'),
+ (16, '2023-09-29 16:30:00'),
+ (21, '2023-09-29 19:30:00'),
+ (26, '2023-09-29 20:30:00'),
+ (2, '2023-09-29 10:00:00'),
+ (7, '2023-09-29 12:00:00'),
+ (12, '2023-09-29 14:30:00'),
+ (17, '2023-09-29 16:30:00'),
+ (22, '2023-09-29 19:30:00'),
+ (27, '2023-09-29 20:30:00'),
+ (3, '2023-09-29 10:00:00'),
+ (8, '2023-09-29 12:00:00'),
+ (13, '2023-09-29 14:30:00'),
+ (18, '2023-09-29 16:30:00'),
+ (23, '2023-09-29 19:30:00'),
+ (28, '2023-09-29 20:30:00'),
+ (4, '2023-09-29 10:00:00'),
+ (9, '2023-09-29 12:00:00'),
+ (14, '2023-09-29 14:30:00'),
+ (19, '2023-09-29 16:30:00'),
+ (24, '2023-09-29 19:30:00'),
+ (29, '2023-09-29 20:30:00'),
+ (5, '2023-09-29 10:00:00'),
+ (10, '2023-09-29 12:00:00'),
+ (15, '2023-09-29 14:30:00'),
+ (20, '2023-09-29 16:30:00'),
+ (25, '2023-09-29 19:30:00'),
+ (30, '2023-09-29 20:30:00');
+
+INSERT INTO movie_broadcast (movie_id, broadcast_date) VALUES 
+ (1, '2023-09-30 10:00:00'),
+ (6, '2023-09-30 12:00:00'),
+ (11, '2023-09-30 14:30:00'),
+ (16, '2023-09-30 16:30:00'),
+ (21, '2023-09-30 19:30:00'),
+ (26, '2023-09-30 20:30:00'),
+ (2, '2023-09-30 10:00:00'),
+ (7, '2023-09-30 12:00:00'),
+ (12, '2023-09-30 14:30:00'),
+ (17, '2023-09-30 16:30:00'),
+ (22, '2023-09-30 19:30:00'),
+ (27, '2023-09-30 20:30:00'),
+ (3, '2023-09-30 10:00:00'),
+ (8, '2023-09-30 12:00:00'),
+ (13, '2023-09-30 14:30:00'),
+ (18, '2023-09-30 16:30:00'),
+ (23, '2023-09-30 19:30:00'),
+ (28, '2023-09-30 20:30:00'),
+ (4, '2023-09-30 10:00:00'),
+ (9, '2023-09-30 12:00:00'),
+ (14, '2023-09-30 14:30:00'),
+ (19, '2023-09-30 16:30:00'),
+ (24, '2023-09-30 19:30:00'),
+ (29, '2023-09-30 20:30:00'),
+ (5, '2023-09-30 10:00:00'),
+ (10, '2023-09-30 12:00:00'),
+ (15, '2023-09-30 14:30:00'),
+ (20, '2023-09-30 16:30:00'),
+ (25, '2023-09-30 19:30:00'),
+ (30, '2023-09-30 20:30:00');
+
