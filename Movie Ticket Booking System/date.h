@@ -1,8 +1,10 @@
 #pragma once
 #include <iostream>
+#include <string>
 #include <windows.h>
 using std::cout;
 using std::cin;
+using std::string;
 using std::istream;
 using std::ostream;
 
@@ -25,6 +27,7 @@ public:
     void readDate();
     void displayDate();
     void displayDateHoursMinutes();
+    string to_string() const;
     Date& operator= (const Date& d);
     friend ostream& operator<<(ostream& os, const Date& d);
     friend istream& operator>>(istream& is, Date& d);

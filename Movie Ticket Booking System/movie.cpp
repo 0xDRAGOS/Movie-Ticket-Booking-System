@@ -334,8 +334,35 @@ Movie MovieRepository::loadMovieByName(const string& name) {
 	return movie;
 }
 
-template <typename T>
-void MovieRepository::updateMovie(Movie& movie, const string& field, const T& value) {
+template <>
+void MovieRepository::updateMovie(Movie& movie, const string& field, const Date& value) {
+	sql::Connection* con = dbConnector.establishConnection();
+	try {
+		const string query = "UPDATE movies SET " + field + " = ? WHERE name = ?";
+		sql::PreparedStatement* pstmt = con->prepareStatement(query);
+		pstmt->setString(1, value.to_string());
+		pstmt->setString(2, movie.getName());
+		int rowsUpdated = pstmt->executeUpdate();
+
+		if (rowsUpdated > 0) {
+			cout << "Movie" << movie.getName() << " modified with success." << endl;
+			con->commit();
+		}
+		else {
+			cout << "Movie" << movie.getName() << " not found." << endl;
+		}
+		delete pstmt;
+	}
+	catch (sql::SQLException& e) {
+		cerr << "Could not update movie ( " << movie.getName() << "). Error message : " << e.what() << endl;
+		con->rollback();
+		exit(1);
+	}
+	dbConnector.closeConnection(con);
+}
+
+template <>
+void MovieRepository::updateMovie(Movie& movie, const string& field, const string& value) {
 	sql::Connection* con = dbConnector.establishConnection();
 	try {
 		const string query = "UPDATE movies SET " + field + " = ? WHERE name = ?";
