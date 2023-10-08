@@ -9,9 +9,6 @@
 
 const string CINEMA_NAME = "Vision Cinema";
 
-bool loggedInPublicUser;
-bool loggedInPrivateUser;
-
 int displayMainOptions();
 void displayTariffs();
 void loginMenu();

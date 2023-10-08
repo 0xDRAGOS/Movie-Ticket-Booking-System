@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClInclude Include="address.h" />
     <ClInclude Include="auditorium.h" />
+    <ClInclude Include="constants.h" />
     <ClInclude Include="login.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="movie.h" />

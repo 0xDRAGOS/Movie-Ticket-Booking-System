@@ -2,6 +2,7 @@
 #include "auditorium.h"
 #include "theatre.h"
 #include "date.h"
+#include "constants.h"
 using std::cout;
 using std::cin;
 using std::getline;

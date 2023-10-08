@@ -149,32 +149,86 @@ Movie MovieInterface::readMovie() {
 	string name, format, rating, director, actors, trailer_url, genre, language, producer, country;
 	Date launch_date;
 
-	cout << "Enter Movie Details:" << endl;
-	cout << "Name: "; getline(cin, name);
-	movie.setName(name);
-	cout << "Format: "; getline(cin, format);
-	movie.setFormat(format);
-	cout << "Rating: "; getline(cin, rating);
-	movie.setRating(rating);
-	cout << "Director: "; getline(cin, director);
-	movie.setDirector(director);
-	cout << "Actors: "; getline(cin, actors);
-	movie.setActors(actors);
-	cout << "Trailer URL: "; getline(cin, trailer_url);
-	movie.setTrailerURL(trailer_url);
-	cout << "Genre: "; getline(cin, genre);
-	movie.setGenre(genre);
-	cout << "Language: "; getline(cin, language);
-	movie.setLanguage(language);
-	cout << "Producer: "; getline(cin, producer);
-	movie.setProducer(producer);
-	cout << "Country: "; getline(cin, country);
-	movie.setCountry(country);
-	cin >> launch_date;
-	movie.setLaunchDate(launch_date);
+	do {
+		cin.ignore();
+
+		cout << "Enter Movie Details:" << endl;
+
+		cout << "Name: "; getline(cin, name);
+		if (name.length() > MAX_STRING_LENGHT) {
+			cerr << "Error: Name exceeds maximum length." << endl;
+			continue;
+		}
+		movie.setName(name);
+
+		cout << "Format: "; getline(cin, format);
+		if (format.length() > MAX_STRING_LENGHT) {
+			cerr << "Error: Format exceeds maximum length." << endl;
+			continue;
+		}
+		movie.setFormat(format);
+
+		cout << "Rating: "; getline(cin, rating);
+		if (rating.length() > MAX_STRING_LENGHT) {
+			cerr << "Error: Rating exceeds maximum length." << endl;
+			continue;
+		}
+		movie.setRating(rating);
+
+		cout << "Director: "; getline(cin, director);
+		if (director.length() > MAX_STRING_LENGHT) {
+			cerr << "Error: Director exceeds maximum length." << endl;
+			continue;
+		}
+		movie.setDirector(director);
+
+		cout << "Actors: "; getline(cin, actors);
+
+		cout << "Trailer URL: "; getline(cin, trailer_url);
+		if (trailer_url.length() > MAX_STRING_LENGHT) {
+			cerr << "Error: Trailer URL exceeds maximum length." << endl;
+			continue;
+		}
+		movie.setTrailerURL(trailer_url);
+
+		cout << "Genre: "; getline(cin, genre);
+		if (genre.length() > MAX_STRING_LENGHT) {
+			cerr << "Error: Genre exceeds maximum length." << endl;
+			continue;
+		}
+		movie.setGenre(genre);
+
+		cout << "Language: "; getline(cin, language);
+		if (language.length() > MAX_STRING_LENGHT) {
+			cerr << "Error: Language exceeds maximum length." << endl;
+			continue;
+		}
+		movie.setLanguage(language);
+
+		cout << "Producer: "; getline(cin, producer);
+		if (producer.length() > MAX_STRING_LENGHT) {
+			cerr << "Error: Producer exceeds maximum length." << endl;
+			continue;
+		}
+		movie.setProducer(producer);
+
+		cout << "Country: "; getline(cin, country);
+		if (country.length() > MAX_STRING_LENGHT) {
+			cerr << "Error: Country exceeds maximum length." << endl;
+			continue;
+		}
+		movie.setCountry(country);
+
+		cout << "Launch Date (YYYY-MM-DD): "; cin >> launch_date;
+		movie.setLaunchDate(launch_date);
+
+		break;
+
+	} while (true);
 
 	return movie;
 }
+
 
 int MovieRepository::getMovieID(Movie& movie, Auditorium& auditorium, Theatre& theatre) {
 	sql::Connection* con = dbConnector.establishConnection();

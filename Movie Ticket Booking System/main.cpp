@@ -131,79 +131,98 @@ int main() {
 						cout << "Enter password: "; cin >> password;
 						PublicUser user = publicUserRep.loadPublicUser(email, password);
 						loadedPrivateUser.updateCredentials(user);
+						break;
 					}
 					case 2:
 					{
 						string name;
+						cin.ignore();
 						cout << "Enter name: "; getline(cin, name);
 						Theatre theatre = theatreRep.loadTheatre(name);
 						loadedPrivateUser.updateTheatre(theatre);
+						break;
 					}
 					case 3:
 					{
 						string name;
 						Address address;
+						cin.ignore();
 						cout << "Enter name: "; getline(cin, name);
 						cout << "Enter address: "; cin >> address;
 						theatre.setName(name);
 						theatre.setAddress(address);
 						loadedPrivateUser.addTheatre(theatre);
+						break;
 					}
 					case 4:
 					{
 						string name;
+						cin.ignore();
 						cout << "Enter name: "; getline(cin, name);
 						theatre = theatreRep.loadTheatre(name);
 						loadedPrivateUser.deleteTheatre(theatre);
+						break;
 					}
 					case 5:
 					{
 						string name;
+						cin.ignore();
 						cout << "Enter theatre name: "; getline(cin, name);
 						theatre = theatreRep.loadTheatre(name);
 						auditorium = auditoriumInt.readAuditorium();
 						loadedPrivateUser.updateAuditorium(auditorium, theatre);
+						break;
 					}
 					case 6:
 					{
 						string name;
+						cin.ignore();
 						cout << "Enter theatre name: "; getline(cin, name);
 						theatre = theatreRep.loadTheatre(name);
 						auditorium = auditoriumInt.readAuditorium();
 						loadedPrivateUser.addAuditorium(auditorium, theatre);
+						break;
 					}
 					case 7:
 					{
 						string name;
+						cin.ignore();
 						cout << "Enter theatre name: "; getline(cin, name);
 						theatre = theatreRep.loadTheatre(name);
 						auditorium = auditoriumInt.readAuditorium();
 						loadedPrivateUser.deleteAuditorium(auditorium, theatre);
+						break;
 					}
 					case 8:
 					{
 						string name;
+						cin.ignore();
 						cout << "Enter name: "; getline(cin, name);
 						movie = movieRep.loadMovieByName(name);
 						loadedPrivateUser.updateMovieDetails(movie);
+						break;
 					}
 					case 9:
 					{
 						string name;
+						cin.ignore();
 						cout << "Enter theatre name: "; getline(cin, name);
 						theatre = theatreRep.loadTheatre(name);
 						auditorium = auditoriumInt.readAuditorium();
 						movie = movieInt.readMovie();
 						loadedPrivateUser.addMovie(movie, auditorium, theatre);
+						break;
 					}
 					case 10:
 					{
 						string name;
+						cin.ignore();
 						cout << "Enter theatre name: "; getline(cin, name);
 						theatre = theatreRep.loadTheatre(name);
 						auditorium = auditoriumInt.readAuditorium();
 						movie = movieInt.readMovie();
 						loadedPrivateUser.deleteMovie(movie, auditorium, theatre);
+						break;
 					}
 					case 11:
 					{
