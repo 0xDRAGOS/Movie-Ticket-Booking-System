@@ -148,7 +148,7 @@ int main() {
 						Address address;
 						cin.ignore();
 						cout << "Enter name: "; getline(cin, name);
-						cout << "Enter address: "; cin >> address;
+						cout << "Enter address: " << endl; cin >> address;
 						theatre.setName(name);
 						theatre.setAddress(address);
 						loadedPrivateUser.addTheatre(theatre);
